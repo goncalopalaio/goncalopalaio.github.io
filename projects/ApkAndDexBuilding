@@ -1,0 +1,3 @@
+Building an .apk from the scratch
+
+Just as a proof of concept. Create a full apk from scratch, including the dex file. It will be useful if I will ever create a direct compiler to .dex.
