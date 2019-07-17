@@ -16,6 +16,12 @@ Sections will be filled as I find time to write about the topic. They will be ve
 ### Other sorting algorithms
 ~~Incomplete~~
 
+## Priority Queues
+~~Incomplete~~
+
+## Symbol tables
+~~Incomplete~~ Binary search; Hash tables, etc.
+
 ## Graphs
 ~~Incomplete~~
 
