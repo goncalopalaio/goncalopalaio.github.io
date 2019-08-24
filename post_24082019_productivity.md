@@ -5,7 +5,7 @@ Productivity is all about minimizing bullshit.
 I feel that I'm constantly complaining about compilation times.
 Just create a new, empty Android project and see how much time it takes to have an application running in the device. It's ridiculous.
 
-I'm far from being the only one complaining, it's 2019, we have faster computer than ever.
+I'm far from being the only one complaining, it's 2019, we have faster computers than ever.
 
 When Android's Jack and Jill project was announced, I had a little bit of hope that things would get better. Unfortunately, the project was dropped.
 

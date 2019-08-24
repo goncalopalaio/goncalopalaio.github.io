@@ -63,6 +63,7 @@ def parse_post_date(file):
 	try:
 		return dt.datetime.strptime(date_in_file_name[1], '%d%m%Y').strftime(' - %d/%m/%Y')
 	except Exception as e:
+		print("Error: Could not get date from %s" % file)
 		return ""
 
 
@@ -84,7 +85,6 @@ def create_htmls_from_mds(post_template, file):
 		content = "".join(lines)
 		content = md.markdown(content)
 
-		print("::::::::::: " + post_template)
 		post_template = post_template.replace(TEMPLATE_TITLE_REPLACEMENT, title)
 		
 		print("Creating html from %s -> %s" % (file, dest))
@@ -102,6 +102,8 @@ def main():
 
 
 	posts = find_files("", "%s*%s" % (POST_PREFIX, EXTENSION_MD))
+	posts = sorted(posts, reverse = True)
+
 	log_list("Found posts: ", posts)
 
 	# Parse posts and convert them into html
