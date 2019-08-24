@@ -1,6 +1,8 @@
 # Face keypoint detection
 
-This hobby project started as a wanting to be a solution to the now finished [Facial Keypoints detection kaggle competition](https://www.kaggle.com/c/facial-keypoints-detection/)
+[Imported from an old blog. 25/08/2019]
+
+This hobby project started as a solution to the now finished [Facial Keypoints detection kaggle competition](https://www.kaggle.com/c/facial-keypoints-detection/)
 
 While messing around with the dataset and reading the competition goal I realized that I was not really interested in the outcome. The original competition only has you predicting a few keypoints and not all images are annotated equally. The competition is over so that's no fun also.
 
@@ -22,6 +24,3 @@ I'll probably use [StephenMilborrow/muct](https://github.com/StephenMilborrow/mu
 [face-keypoint-detection](https://github.com/goncalopalaio/face-keypoint-detection)
 
 -- April 22 2018
-
-
-[Imported from an old blog. 25/08/2019]
