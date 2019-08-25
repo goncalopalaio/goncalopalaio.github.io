@@ -158,8 +158,5 @@ def main():
 	generate_rss_file(posts_info)
 
 
-
-
-
 if __name__ == '__main__':
 	main()
