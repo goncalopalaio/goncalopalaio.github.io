@@ -2,6 +2,10 @@ import glob
 import os
 import markdown2 as md
 import datetime as dt
+from rfeed import *
+
+ROOT_URL = "https://goncalopalaio.github.io/"
+URL_TO_FEED = ROOT_URL + "rss"
 
 SEP = "_"
 POST_PREFIX = "post_"
@@ -11,6 +15,7 @@ TEMPLATE_EXTENSION_HTML = ".template.html"
 TEMPLATE_POST_REPLACEMENT = "<!-- _POSTS_ -->"
 TEMPLATE_POST_CONTENT_REPLACEMENT = "<!-- _POST_CONTENT_ -->"
 TEMPLATE_TITLE_REPLACEMENT = "<!-- _TITLE_ -->"
+
 
 def log_list(text, lst):
 	print(text)
@@ -61,10 +66,11 @@ def parse_post_title(line):
 def parse_post_date(file):
 	date_in_file_name = file.split(SEP)
 	try:
-		return dt.datetime.strptime(date_in_file_name[1], '%d%m%Y').strftime(' - %d/%m/%Y')
+		date = dt.datetime.strptime(date_in_file_name[1], '%d%m%Y')
+		return date, date.strftime(' - %d/%m/%Y')
 	except Exception as e:
 		print("Error: Could not get date from %s" % file)
-		return ""
+		return None, ""
 
 
 def create_link(title, path):
@@ -76,11 +82,11 @@ def create_htmls_from_mds(post_template, file):
 		lines = f.readlines()
 
 		title = parse_post_title(lines)
-		date = parse_post_date(file)
+		date, date_str = parse_post_date(file)
 
 		dest = file.replace(EXTENSION_MD, EXTENSION_HTML)
 
-		link = create_link(title + date, dest)
+		link = create_link(title + date_str, dest)
 
 		content = "".join(lines)
 		content = md.markdown(content)
@@ -91,7 +97,34 @@ def create_htmls_from_mds(post_template, file):
 
 		write_content_to_file(dest, post_template.replace(TEMPLATE_POST_CONTENT_REPLACEMENT, content))
 
-		return link
+		return dest, title, date, link
+
+
+def generate_rss_file(posts_info):
+	items_feed = []
+
+	for file, title, date in posts_info:
+		post_url = ROOT_URL + file
+		print("Adding post to rss: %s" % post_url)
+		item = Item(
+			title = title,
+			link = post_url, 
+			description = title,
+			author = "Gonçalo Palaio",
+			guid = Guid(post_url),
+			pubDate = date)
+		items_feed.append(item)
+
+	feed = Feed(
+	title = "Gonçalo Palaio Blog",
+	link = URL_TO_FEED,
+	description = "Random musings about programming",
+	language = "en-US",
+	lastBuildDate = dt.datetime.now(),
+	items = items_feed)
+
+	write_content_to_file("rss", feed.rss())
+
 
 def main():
 	post_template = read_file_contents("post%s" % TEMPLATE_EXTENSION_HTML)
@@ -108,17 +141,24 @@ def main():
 
 	# Parse posts and convert them into html
 	# Create html files for posts
-	posts_html = []
+	posts_info = []
+	posts_links_html = []
 	for p in posts:
-		link = create_htmls_from_mds(post_template, p)
-		posts_html.append(link)
+		file, title, date, link = create_htmls_from_mds(post_template, p)
+		posts_links_html.append(link)
+		posts_info.append((file, title, date))
 
 
 	# Insert list of posts in the index page
 	templates = find_files("", "index%s" % TEMPLATE_EXTENSION_HTML)
 	log_list("Found templates: ", templates)	
 	for f in templates:
-		replace_post_list(f, posts_html)
+		replace_post_list(f, posts_links_html)
+
+	generate_rss_file(posts_info)
+
+
+
 
 
 if __name__ == '__main__':
