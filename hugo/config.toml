@@ -6,7 +6,7 @@ theme = "terminal"
 
 [params]
   contentTypeName = "post"
-  themeColor = "red"
+  themeColor = "green"
   showMenuItems = 2
   fullWidthTheme = false
   centerTheme = true
