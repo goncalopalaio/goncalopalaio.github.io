@@ -6,39 +6,54 @@
     <description>Recent content on Gonçalo Palaio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 25 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 26 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://goncalopalaio.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Make your own tools</title>
+      <link>https://goncalopalaio.github.io/post/post_26082019_make_your_own_tools/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://goncalopalaio.github.io/post/post_26082019_make_your_own_tools/</guid>
+      <description>Make your own tools Don&amp;rsquo;t be afraid to create your own tools. If you need a specific tool for a specific job, don&amp;rsquo;t be afraid to create a new tool even if you have to reinvent the wheel.
+You&amp;rsquo;ll come out of it with a better understanding of the problem and hopefully with something customizable to your needs. Hey, maybe some other person will find it useful.
+That&amp;rsquo;s it.</description>
+    </item>
+    
+    <item>
+      <title>Android, incremental builds and compilation times</title>
+      <link>https://goncalopalaio.github.io/post/post_24082019_productivity/</link>
+      <pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://goncalopalaio.github.io/post/post_24082019_productivity/</guid>
+      <description>Android, incremental builds and compilation times Productivity is all about minimizing bullshit.
+I feel that I&amp;rsquo;m constantly complaining about compilation times. Just create a new, empty Android project and see how much time it takes to have an application running in the device. It&amp;rsquo;s ridiculous.
+I&amp;rsquo;m far from being the only one complaining, it&amp;rsquo;s 2019, we have faster computers than ever.
+When Android&amp;rsquo;s Jack and Jill project was announced, I had a little bit of hope that things would get better.</description>
+    </item>
+    
+    <item>
+      <title>Face keypoint detection</title>
+      <link>https://goncalopalaio.github.io/post/post_22042018_keypoints/</link>
+      <pubDate>Sun, 22 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://goncalopalaio.github.io/post/post_22042018_keypoints/</guid>
+      <description>Face keypoint detection [Imported from an old blog. 25/08/2019]
+This hobby project started as a solution to the now finished Facial Keypoints detection kaggle competition
+While messing around with the dataset and reading the competition goal I realized that I was not really interested in the outcome. The original competition only has you predicting a few keypoints and not all images are annotated equally. The competition is over so that&amp;rsquo;s no fun also.</description>
+    </item>
+    
+    <item>
       <title>About</title>
       <link>https://goncalopalaio.github.io/about/</link>
-      <pubDate>Fri, 25 Jan 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://goncalopalaio.github.io/about/</guid>
-      <description>Hi there My name is Radek and I&amp;rsquo;m the author of this theme. I made it to help you present your ideas easier.
-We all know how hard is to start something on the web, especially these days. You need to prepare a bunch of stuff, configure them and when that’s done — create the content.
-This theme is pretty basic and covers all of the essentials. All you have to do is start typing!</description>
-    </item>
-    
-    <item>
-      <title>Hello Friend</title>
-      <link>https://goncalopalaio.github.io/post/hello/</link>
-      <pubDate>Fri, 25 Jan 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://goncalopalaio.github.io/post/hello/</guid>
-      <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec interdum metus. Aenean rutrum ligula sodales ex auctor, sed tempus dui mollis. Curabitur ipsum dui, aliquet nec commodo at, tristique eget ante. Donec quis dolor nec nunc mollis interdum vel in purus. Sed vitae leo scelerisque, sollicitudin elit sed, congue ante. In augue nisl, vestibulum commodo est a, tristique porttitor est. Proin laoreet iaculis ornare. Nullam ut neque quam.
- Fusce pharetra suscipit orci nec tempor.</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://goncalopalaio.github.io/post/first-post-hugo/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://goncalopalaio.github.io/post/first-post-hugo/</guid>
-      <description>asds</description>
+      <guid>https://goncalopalaio.github.io/about/</guid>
+      <description>Hi there My name is Gonçalo. I&amp;rsquo;m a software developer, working out of Coimbra, Portugal.
+At my current job I work on Android applications with Java and Kotlin.
+I work with Applied AI and Machine Learning; Python, Rust, C++, OpenGL and Tensorflow in my spare time.</description>
     </item>
     
     <item>
@@ -47,7 +62,8 @@ This theme is pretty basic and covers all of the essentials. All you have to do 
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://goncalopalaio.github.io/showcase/</guid>
-      <description>Spare Time Projects  lcat - Colors, filters and annotates adb logcat output. fibre-wallpaper - Android Live Wallpaper timelapse - Command line utility to record timelapse video using a webcam gonet-nural - Small experiment in training a simple Tensorflow model using Python, exporting it and reimplementing it in C with minimal dependencies. adb-control-center - Proof-of-concept (barely works) interface for common android ADB commands used during development. Connects to ADB server through sockets.</description>
+      <description>This is a random assortment of projects I&amp;rsquo;ve worked on in the past.
+Spare Time Projects  lcat - Colors, filters and annotates adb logcat output. fibre-wallpaper - Android Live Wallpaper timelapse - Command line utility to record timelapse video using a webcam gonet-nural - Small experiment in training a simple Tensorflow model using Python, exporting it and reimplementing it in C with minimal dependencies. adb-control-center - Proof-of-concept (barely works) interface for common android ADB commands used during development.</description>
     </item>
     
   </channel>

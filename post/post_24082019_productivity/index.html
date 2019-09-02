@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Android, incremental builds and compilation times :: Gonçalo Palaio — Blog</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="Android, incremental builds and compilation times Productivity is all about minimizing bullshit.
+I feel that I&amp;rsquo;m constantly complaining about compilation times. Just create a new, empty Android project and see how much time it takes to have an application running in the device. It&amp;rsquo;s ridiculous.
+I&amp;rsquo;m far from being the only one complaining, it&amp;rsquo;s 2019, we have faster computers than ever.
+When Android&amp;rsquo;s Jack and Jill project was announced, I had a little bit of hope that things would get better."/>
+<meta name="keywords" content=""/>
+<meta name="robots" content="noodp"/>
+<link rel="canonical" href="https://goncalopalaio.github.io/post/post_24082019_productivity/" />
+
+
+<link rel="stylesheet" href="https://goncalopalaio.github.io/assets/style.css">
+
+  <link rel="stylesheet" href="https://goncalopalaio.github.io/assets/red.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://goncalopalaio.github.io/img/apple-touch-icon-144-precomposed.png">
+
+<link rel="shortcut icon" href="https://goncalopalaio.github.io/img/favicon/red.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Android, incremental builds and compilation times :: Gonçalo Palaio — Blog" />
+<meta name="twitter:description" content="Android, incremental builds and compilation times Productivity is all about minimizing bullshit.
+I feel that I&amp;rsquo;m constantly complaining about compilation times. Just create a new, empty Android project and see how much time it takes to have an application running in the device. It&amp;rsquo;s ridiculous.
+I&amp;rsquo;m far from being the only one complaining, it&amp;rsquo;s 2019, we have faster computers than ever.
+When Android&amp;rsquo;s Jack and Jill project was announced, I had a little bit of hope that things would get better." />
+<meta name="twitter:site" content="https://goncalopalaio.github.io/" />
+<meta name="twitter:creator" content="Gonçalo" />
+<meta name="twitter:image" content="">
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Android, incremental builds and compilation times :: Gonçalo Palaio — Blog">
+<meta property="og:description" content="Android, incremental builds and compilation times Productivity is all about minimizing bullshit.
+I feel that I&amp;rsquo;m constantly complaining about compilation times. Just create a new, empty Android project and see how much time it takes to have an application running in the device. It&amp;rsquo;s ridiculous.
+I&amp;rsquo;m far from being the only one complaining, it&amp;rsquo;s 2019, we have faster computers than ever.
+When Android&amp;rsquo;s Jack and Jill project was announced, I had a little bit of hope that things would get better." />
+<meta property="og:url" content="https://goncalopalaio.github.io/post/post_24082019_productivity/" />
+<meta property="og:site_name" content="Android, incremental builds and compilation times" />
+<meta property="og:image" content="">
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+<meta property="article:published_time" content="2019-08-24 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="">
+
+
+<div class="container center">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    Home
+  </div>
+</a>
+
+    </div>
+    <div class="menu-trigger">menu</div>
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/showcase">Showcase</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/showcase">Showcase</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://goncalopalaio.github.io/post/post_24082019_productivity/">Android, incremental builds and compilation times</a></h1>
+  <div class="post-meta">
+      
+    <span class="post-date">
+      2019-08-24
+    </span>
+    
+    
+    <span class="post-author">::
+      Gonçalo
+    </span>
+    
+  </div>
+
+  
+
+  
+
+  <div class="post-content">
+    
+
+<h1 id="android-incremental-builds-and-compilation-times">Android, incremental builds and compilation times</h1>
+
+<p>Productivity is all about minimizing bullshit.</p>
+
+<p>I feel that I&rsquo;m constantly complaining about compilation times.
+Just create a new, empty Android project and see how much time it takes to have an application running in the device. It&rsquo;s ridiculous.</p>
+
+<p>I&rsquo;m far from being the only one complaining, it&rsquo;s 2019, we have faster computers than ever.</p>
+
+<p>When Android&rsquo;s Jack and Jill project was announced, I had a little bit of hope that things would get better. Unfortunately, the project was dropped.</p>
+
+<p>Providing compatibility with the existing plugin and library environment, proved to be too much. The fact that Kotlin might have been in the horizon of being officially supported probably didn&rsquo;t help.
+It felt like it was time to throw everything into the thrash and start over. Sadly reality strikes you just have to go with what works.
+I don&rsquo;t have any way to know if it would have solved my problems but it&rsquo;s the only thing I can grab onto :).</p>
+
+<p>The consequence it&rsquo;s that now we&rsquo;re pretty much stuck with compiling and dexing and whatever else made sense in 2008.
+It&rsquo;s feels like my computer is doing duplicate work every time I start to compile. When I see all the layers the build system has to go through, I have a hard time imagining that things will be improved significantly just from updates to the SDK and build tools. Especially if you have an existing big project.</p>
+
+<p>If you&rsquo;re not careful with the dependencies you introduce to your project you&rsquo;ll see your compilation times explode. Just imagine one day waking up, and your project takes several minutes to compile.</p>
+
+<p>Just as an aside: KAPT did not have incremental compilation up to just recently. KAPT will ruin your compilation times if you&rsquo;re not careful. Like KAPT there&rsquo;s more things like this.</p>
+
+<p>I&rsquo;m pretty much on the side that incremental compilation is just not ideal.
+From my experience, problems with caches will ruin your day frequently.</p>
+
+<p>Just to finish this rant, if you&rsquo;re starting a new programming language that you intend people use, please consider these things:
+ - Computers can be really fast and you can have really fast compilation times.
+ - Incremental builds might cause more problems than they fix on average.
+ - Take compilation times as a feature of the language. Take also in consideration that many people will have an absurd amount of code to compile someday. It&rsquo;s not just about those hello world programs.
+ - If you make it fast for a lot of code, chances are that it will be really fast for regular amounts of code.</p>
+
+<p>That&rsquo;s it for today.</p>
+
+  </div>
+  
+  <div class="pagination">
+    <div class="pagination__title">
+      <span
+        class="pagination__title-h">Read other posts</span>
+      <hr />
+    </div>
+    <div class="pagination__buttons">
+      
+      <span class="button previous">
+        <a href="https://goncalopalaio.github.io/post/post_26082019_make_your_own_tools/">
+          <span class="button__icon">←</span>
+          <span class="button__text">Make your own tools</span>
+        </a>
+      </span>
+      
+      
+      <span class="button next">
+        <a href="https://goncalopalaio.github.io/post/post_22042018_keypoints/">
+          <span class="button__text">Face keypoint detection</span>
+          <span class="button__icon">→</span>
+        </a>
+      </span>
+      
+    </div>
+  </div>
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2019 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://goncalopalaio.github.io/assets/main.js"></script>
+<script src="https://goncalopalaio.github.io/assets/prism.js"></script>
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

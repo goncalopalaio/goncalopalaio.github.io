@@ -1,4 +1,3 @@
-rm ../404.html
 rm -rf ../fonts
 rm -rf ../images
 rm -rf ../js
