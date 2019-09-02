@@ -11,3 +11,22 @@ title: "Showcase"
 - [gonet-nural](https://github.com/goncalopalaio/gonet-nural) - Small experiment in training a simple Tensorflow model using Python, exporting it and reimplementing it in C with minimal dependencies.
 - [adb-control-center](https://github.com/goncalopalaio/adb-control-center) - Proof-of-concept (barely works) interface for common android ADB commands used during development. Connects to ADB server through sockets.
 - [lorenz-s-attractor-sketch-c](https://github.com/goncalopalaio/lorenz-s-attractor-sketch-c) - Small program that renders a Lorenz's attractor
+
+## Random Screenshots From Projects
+
+![](/showcase_images/2018-07-2018_03_08.gif)
+![](/showcase_images/b_2017-04-25_22_19_55.gif)
+![](/showcase_images/cnn.gif)
+![](/showcase_images/ihc.png)
+![](/showcase_images/memoria.png)
+![](/showcase_images/sbd.png)
+![](/showcase_images/screenshot_141.png)
+![](/showcase_images/screenshot_147.png)
+![](/showcase_images/screenshot_155.png)
+![](/showcase_images/screenshot_156.png)
+![](/showcase_images/screenshot_168.png)
+![](/showcase_images/screenshot_172.png)
+![](/showcase_images/screenshot_183.png)
+![](/showcase_images/screenshot_184.png)
+![](/showcase_images/screenshot_51.png)
+![](/showcase_images/temp-raytracer.gif)

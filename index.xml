@@ -47,7 +47,7 @@ This theme is pretty basic and covers all of the essentials. All you have to do 
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://goncalopalaio.github.io/showcase/</guid>
-      <description> Spare Time Projects  lcat - Colors, filters and annotates adb logcat output. fibre-wallpaper - Android Live Wallpaper timelapse - Command line utility to record timelapse video using a webcam gonet-nural - Small experiment in training a simple Tensorflow model using Python, exporting it and reimplementing it in C with minimal dependencies.  </description>
+      <description>Spare Time Projects  lcat - Colors, filters and annotates adb logcat output. fibre-wallpaper - Android Live Wallpaper timelapse - Command line utility to record timelapse video using a webcam gonet-nural - Small experiment in training a simple Tensorflow model using Python, exporting it and reimplementing it in C with minimal dependencies. adb-control-center - Proof-of-concept (barely works) interface for common android ADB commands used during development. Connects to ADB server through sockets.</description>
     </item>
     
   </channel>
