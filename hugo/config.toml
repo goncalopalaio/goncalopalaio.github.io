@@ -6,10 +6,10 @@ theme = "terminal"
 
 [params]
   contentTypeName = "post"
-  themeColor = "orange"
+  themeColor = "red"
   showMenuItems = 2
   fullWidthTheme = false
-  centerTheme = false
+  centerTheme = true
 
 [languages]
   [languages.en]

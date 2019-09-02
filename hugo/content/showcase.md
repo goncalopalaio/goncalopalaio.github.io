@@ -14,19 +14,19 @@ title: "Showcase"
 
 ## Random Screenshots From Projects
 
-![](/showcase_images/2018-07-2018_03_08.gif)
-![](/showcase_images/b_2017-04-25_22_19_55.gif)
-![](/showcase_images/cnn.gif)
-![](/showcase_images/ihc.png)
-![](/showcase_images/memoria.png)
-![](/showcase_images/sbd.png)
-![](/showcase_images/screenshot_141.png)
-![](/showcase_images/screenshot_147.png)
-![](/showcase_images/screenshot_155.png)
-![](/showcase_images/screenshot_156.png)
-![](/showcase_images/screenshot_168.png)
-![](/showcase_images/screenshot_172.png)
-![](/showcase_images/screenshot_183.png)
-![](/showcase_images/screenshot_184.png)
-![](/showcase_images/screenshot_51.png)
-![](/showcase_images/temp-raytracer.gif)
+<a class="inline-link" target="_blank" href="/showcase_images/sbd.png"><img style="width:30%;" src="/showcase_images/sbd.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/screenshot_183.png"><img style="width:30%;" src="/showcase_images/screenshot_183.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/cnn.gif"><img style="width:30%;" src="/showcase_images/cnn.gif"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/2018-07-2018_03_08.gif"><img style="width:30%;" src="/showcase_images/2018-07-2018_03_08.gif"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/temp-raytracer.gif"><img style="width:30%;" src="/showcase_images/temp-raytracer.gif"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/ihc.png"><img style="width:30%;" src="/showcase_images/ihc.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/memoria.png"><img style="width:30%;" src="/showcase_images/memoria.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/b_2017-04-25_22_19_55.gif"><img style="width:30%;" src="/showcase_images/b_2017-04-25_22_19_55.gif"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/screenshot_141.png"><img style="width:30%;" src="/showcase_images/screenshot_141.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/screenshot_147.png"><img style="width:30%;" src="/showcase_images/screenshot_147.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/screenshot_155.png"><img style="width:30%;" src="/showcase_images/screenshot_155.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/screenshot_156.png"><img style="width:30%;" src="/showcase_images/screenshot_156.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/screenshot_168.png"><img style="width:30%;" src="/showcase_images/screenshot_168.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/screenshot_172.png"><img style="width:30%;" src="/showcase_images/screenshot_172.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/screenshot_184.png"><img style="width:30%;" src="/showcase_images/screenshot_184.png"/></a>
+<a class="inline-link" target="_blank" href="/showcase_images/screenshot_51.png"><img style="width:30%;" src="/showcase_images/screenshot_51.png"/></a>  
