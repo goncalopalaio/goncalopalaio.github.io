@@ -1,1 +1,0 @@
-# goncalopalaio.github.io
