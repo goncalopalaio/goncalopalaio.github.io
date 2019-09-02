@@ -1,5 +1,5 @@
 baseURL = "http://goncalopalaio.github.io"
 languageCode = "en-us"
 title = "Gonçalo Palaio Site"
-theme = "cactus"
 publishDir= "../"
+theme = "cactus"
