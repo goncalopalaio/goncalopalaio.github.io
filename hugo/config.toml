@@ -22,7 +22,7 @@ theme = "terminal"
     readOtherPosts = "Read other posts"
 
     [languages.en.params.logo]
-      logoText = "Blog"
+      logoText = "Gonçalo's Blog"
       logoHomeLink = "/"
 
     [languages.en.menu]
