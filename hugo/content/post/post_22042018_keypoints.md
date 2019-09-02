@@ -1,3 +1,11 @@
++++
+title = "Face keypoint detection"
+date = "2018-04-22"
+author = "Gonçalo"
+description = "Side project from the facial Keypoints detection kaggle competition"
+draft = false
++++
+
 # Face keypoint detection
 
 [Imported from an old blog. 25/08/2019]

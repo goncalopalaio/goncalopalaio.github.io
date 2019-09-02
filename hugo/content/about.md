@@ -1,22 +1,12 @@
 +++
 title = "About"
-date = "2019-01-25"
-author = "Radek"
 +++
 
-# Hi there
 
-My name is Radek and I'm the author of this theme. I made it to help you present your ideas easier.
+## Hi there
 
-We all know how hard is to start something on the web, especially these days. You need to prepare a bunch of stuff, configure them and when that’s done — create the content.
+My name is Gonçalo. I'm a software developer, working out of Coimbra, Portugal.
 
-This theme is pretty basic and covers all of the essentials. All you have to do is start typing!
+At my current job I work on Android applications with Java and Kotlin.
 
-The theme includes:
-
-- **5 duotone themes**, depending on your preferences (orange, red, blue, green, pink)
-- [**Fira Code**](https://github.com/tonsky/FiraCode) as default monospaced font. It's gorgeous!
-- **realy nice, custom duotone** syntax highlighting based on [**PrismJS**](https://prismjs.com)
-- mobile friendly layout
-
-So, there you have it... enjoy!
+I work with Applied AI and Machine Learning; Python, Rust, C++, OpenGL and Tensorflow in my spare time.

@@ -1,3 +1,11 @@
++++
+title = "About Computers"
+date = "2019-02-09"
+author = "Gonçalo"
+description = "Almost everything about computers"
+draft = true
++++
+
 # About Computers
 
 This is a one page all in one multiple blog post thing that includes multiple topics.

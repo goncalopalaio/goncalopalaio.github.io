@@ -1,3 +1,11 @@
++++
+title = "Android, incremental builds and compilation times"
+date = "2019-08-24"
+author = "Gonçalo"
+description = "Compilation impacts productivity"
+draft = false
++++
+
 # Android, incremental builds and compilation times
 
 Productivity is all about minimizing bullshit.
