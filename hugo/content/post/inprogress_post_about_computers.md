@@ -2,7 +2,6 @@
 title = "About Computers"
 date = "2019-02-09"
 author = "Gonçalo"
-description = "Almost everything about computers"
 draft = true
 +++
 
