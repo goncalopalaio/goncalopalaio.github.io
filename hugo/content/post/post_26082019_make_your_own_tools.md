@@ -5,8 +5,6 @@ author = "Gonçalo"
 draft = false
 +++
 
-# Make your own tools
-
 Don't be afraid to create your own tools.
 If you need a specific tool for a specific job, don't be afraid to create a new tool even if you have to reinvent the wheel.
 

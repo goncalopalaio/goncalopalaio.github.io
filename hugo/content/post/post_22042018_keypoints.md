@@ -5,8 +5,6 @@ author = "Gonçalo"
 draft = false
 +++
 
-# Face keypoint detection
-
 [Imported from an old blog. 25/08/2019]
 
 This hobby project started as a solution to the now finished [Facial Keypoints detection kaggle competition](https://www.kaggle.com/c/facial-keypoints-detection/)

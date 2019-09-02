@@ -5,8 +5,6 @@ author = "Gonçalo"
 draft = true
 +++
 
-# About Computers
-
 This is a one page all in one multiple blog post thing that includes multiple topics.
 Handling multiple files takes a lot of work and I thought this might be a fun way to write about multiple topics.
 

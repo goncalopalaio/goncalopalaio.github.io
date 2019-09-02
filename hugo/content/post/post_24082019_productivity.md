@@ -5,8 +5,6 @@ author = "Gonçalo"
 draft = false
 +++
 
-# Android, incremental builds and compilation times
-
 Productivity is all about minimizing bullshit.
 
 I feel that I'm constantly complaining about compilation times.
