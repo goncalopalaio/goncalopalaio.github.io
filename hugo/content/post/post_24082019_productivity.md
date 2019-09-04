@@ -5,7 +5,7 @@ author = "Gonçalo"
 draft = false
 +++
 
-Productivity is all about minimizing bullshit.
+Productivity is all about minimizing things that get in the way.
 
 I feel that I'm constantly complaining about compilation times.
 Just create a new, empty Android project and see how much time it takes to have an application running in the device. It's ridiculous.
