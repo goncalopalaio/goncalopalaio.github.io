@@ -147,7 +147,6 @@ fn create_file(title: &str, content: &str, output_name: &str) {
 			line
 		};
 
-		// println!("{}", &output);
 		contents.push_str(&output);
 	}
 
@@ -167,7 +166,7 @@ fn generate_index(title: &str, header_md_content: &str, body_md_content: &str) {
 
 fn generate_sub_page(header_md_content: &str, md_path: &PathBuf) {
 	let name = md_path_to_name(&md_path);
-	println!("{:?}", name);
+	println!("Page: {:?}", name);
 	
 	let mut md_content = String::new();
 
