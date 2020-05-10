@@ -8,6 +8,6 @@ I have a single folder that contains all the posts and pages in a markdown forma
 
 I run my generator (written in Rust, not that it really matters). This is pretty simplistic, but allows me to add new features later more easily than if I was using Hugo.
 
-This change was inspired by a post by Fabien Sanglard (0X10 RULES)[https://fabiensanglard.net/ilike/index.html].
+This change was inspired by a post by Fabien Sanglard [0X10 RULES](https://fabiensanglard.net/ilike/index.html).
 
 I think this will allow me to have less friction to create a new blog post. It's simple, but it's custom made for me.
