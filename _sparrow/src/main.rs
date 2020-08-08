@@ -9,9 +9,9 @@ use std::path::PathBuf;
 const TEMPLATE_PATH: &'static str = "../_contents/template-index.html";
 const MD_FILES_PATH: &'static str = "../_contents/";
 
+const UNLISTED_POST_PREFIX: &'static str = "unlisted-post-";
 const PAGE_PREFIX: &'static str = "page-";
 const POST_PREFIX: &'static str = "post-";
-const UNLISTED_POST_PREFIX: &'static str = "unlisted-post-";
 
 const TITLE_CONTENT_PREFIX: &'static str = "title = ";
 const DATE_CONTENT_PREFIX: &'static str = "date = ";
@@ -124,10 +124,10 @@ fn uppercase_first_letter(s: &str) -> String {
 fn md_path_to_name(md_path: &PathBuf) -> String {
     let name = md_path.file_stem().unwrap().to_str().unwrap();
 
-    let mut name = name.replace(PAGE_PREFIX, "");
+    let mut name = name.replace(UNLISTED_POST_PREFIX, "");
+    name = name.replace(PAGE_PREFIX, "");
     name = name.replace(POST_PREFIX, "");
-    name = name.replace(UNLISTED_POST_PREFIX, "");
-
+    
     return name;
 }
 
