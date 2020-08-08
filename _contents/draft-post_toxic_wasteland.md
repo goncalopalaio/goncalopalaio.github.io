@@ -4,7 +4,6 @@ date = "2019-04-27"
 author = "Gonçalo"
 cover = "hello.jpg"
 description = "View bindings and avoiding zones that will take productivity away."
-draft = true
 +++
 
 There are these zones that while developing something will take away your time and never give anything back.

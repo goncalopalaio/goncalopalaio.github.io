@@ -24,7 +24,7 @@ struct Post {
     name: String,
     title: String,
     date_str: String,
-    date: NaiveDate,
+    date: Option<NaiveDate>,
     author: String,
     content: String,
 }
@@ -40,31 +40,43 @@ fn get_comrak_options() -> ComrakOptions {
     };
 }
 
+fn parse_file_data(file: &PathBuf) -> (String, String, String, String, Option<NaiveDate>) {
+
+    let name = &md_path_to_name(&file);
+    let mut title = uppercase_first_letter(name);
+    let mut date_str = String::new();
+
+    let file_contents = fs::read_to_string(file).unwrap();
+    let full_content: Vec<_> = file_contents.lines().collect();
+
+    let mut content = String::new();
+
+    for line in full_content {
+        if line.starts_with(TITLE_CONTENT_PREFIX) {
+            title = line.replace(TITLE_CONTENT_PREFIX, "").to_string();
+        } else if line.starts_with(DATE_CONTENT_PREFIX) {
+            date_str = line.replace(DATE_CONTENT_PREFIX, "").to_string();
+        } else {
+        	content.push_str(line);
+        	content.push_str("\n")
+        }
+    }
+
+    let date = if let Ok(date) = NaiveDate::parse_from_str(&date_str, "%d-%m-%Y") {
+        Some(date)
+    } else {
+        None
+    };
+
+    return (content, name.to_string(), title, date_str, date);
+}
+
 fn read_posts(list: &Vec<PathBuf>) -> std::vec::Vec<Post> {
     let mut posts = Vec::<Post>::new();
 
     for file in list {
-        let file_contents = fs::read_to_string(file).unwrap();
-        let full_content: Vec<_> = file_contents.lines().collect();
-
-        let name = md_path_to_name(&file);
-
-        let mut content = String::new();
-        let mut title = uppercase_first_letter(&name);
-        let mut date_str = String::new();
-
-        for line in full_content {
-            if line.starts_with(TITLE_CONTENT_PREFIX) {
-                title = line.replace(TITLE_CONTENT_PREFIX, "").to_string();
-            } else if line.starts_with(DATE_CONTENT_PREFIX) {
-                date_str = line.replace(DATE_CONTENT_PREFIX, "").to_string();
-            } else {
-                content.push_str(line);
-                content.push_str("\n")
-            }
-        }
-
-        let date = NaiveDate::parse_from_str(&date_str, "%d-%m-%Y").unwrap();
+        
+        let (content, name, title, date_str, date) = parse_file_data(file);
 
         let post = Post {
             name: name,
@@ -83,7 +95,7 @@ fn read_posts(list: &Vec<PathBuf>) -> std::vec::Vec<Post> {
 
     for p in &posts {
         println!(
-            "Post: {} | {} | {} | {}",
+            "Post: {} | {} | {} | {:?}",
             p.name, p.title, p.date_str, p.date
         );
     }
@@ -107,10 +119,10 @@ fn uppercase_first_letter(s: &str) -> String {
 
 fn md_path_to_name(md_path: &PathBuf) -> String {
     let name = md_path.file_stem().unwrap().to_str().unwrap();
-    
+
     let mut name = name.replace(PAGE_PREFIX, "");
-	name = name.replace(POST_PREFIX, "");
-	name = name.replace(UNLISTED_POST_PREFIX, "");
+    name = name.replace(POST_PREFIX, "");
+    name = name.replace(UNLISTED_POST_PREFIX, "");
 
     return name;
 }
@@ -150,7 +162,7 @@ fn create_md_header(title: &str, pages: &Vec<PathBuf>) -> String {
 }
 
 fn create_file(title: &str, content: &str, output_name: &str) {
-    let file = File::open(TEMPLATE_PATH).unwrap();
+	let file = File::open(TEMPLATE_PATH).unwrap();
     let reader = BufReader::new(file);
     let mut contents = String::new();
     for l in reader.lines() {
@@ -182,14 +194,14 @@ fn generate_index(title: &str, header_md_content: &str, body_md_content: &str) {
 }
 
 fn generate_sub_page(header_md_content: &str, md_path: &PathBuf) {
-    let name = md_path_to_name(&md_path);
-    let title = uppercase_first_letter(&name);
-    println!("Page: {:?}", name);
 
     let mut md_content = String::new();
 
     md_content.push_str(header_md_content);
-    md_content.push_str(&fs::read_to_string(md_path).unwrap());
+
+	let (content, name, title, _, _) = parse_file_data(md_path);
+	
+    md_content.push_str(&content);
 
     let content = markdown_to_html(&md_content, &get_comrak_options());
 
@@ -197,13 +209,16 @@ fn generate_sub_page(header_md_content: &str, md_path: &PathBuf) {
 }
 
 fn generate_sub_page_post(header_md_content: &str, post: &Post) {
-    println!("{:?}", &post.name);
-
     let mut md_content = String::new();
 
     md_content.push_str(header_md_content);
     md_content.push_str(&format!("### {}\n", &post.title));
-    md_content.push_str(&format!("{} :: {}\n", &post.date, &post.author));
+    if let Some(date) = &post.date {
+        md_content.push_str(&format!("{} :: {}\n", &date, &post.author));
+    } else {
+        md_content.push_str(&format!("{}\n", &post.author));
+    }
+
     md_content.push_str(&post.content);
 
     let content = markdown_to_html(&md_content, &get_comrak_options());
@@ -216,10 +231,14 @@ fn generate_md_post_list(list: &Vec<Post>) -> String {
     content.push_str("#### Posts\n");
 
     for post in list {
-        content.push_str(&format!(
-            "[{}]({}.html) {}\n\n",
-            &post.title, &post.name, &post.date
-        ))
+        if let Some(date) = &post.date {
+            content.push_str(&format!(
+                "[{}]({}.html) {}\n\n",
+                &post.title, &post.name, &date
+            ))
+        } else {
+            content.push_str(&format!("[{}]({}.html)\n\n", &post.title, &post.name))
+        }
     }
 
     return content;
@@ -229,6 +248,7 @@ fn main() {
     println!("Starting");
     let page_title = "Gonçalo Palaio — Blog";
     let index_title = "Gonçalo's Blog";
+
     let md_posts = get_md_files(POST_PREFIX);
     let md_unlisted_posts = get_md_files(UNLISTED_POST_PREFIX);
     let md_pages = get_md_files(PAGE_PREFIX);
@@ -247,7 +267,7 @@ fn main() {
     for post in &posts {
         generate_sub_page_post(&header_md_content, &post);
     }
-    
+
     for post in &unlisted_posts {
         generate_sub_page_post(&header_md_content, &post);
     }
