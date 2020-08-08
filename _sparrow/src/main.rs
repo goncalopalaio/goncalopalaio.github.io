@@ -6,8 +6,9 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::path::PathBuf;
 
-const POST_PREFIX: &'static str = "post-";
 const PAGE_PREFIX: &'static str = "page-";
+const POST_PREFIX: &'static str = "post-";
+const UNLISTED_POST_PREFIX: &'static str = "unlisted-post-";
 
 const TITLE_CONTENT_PREFIX: &'static str = "title = ";
 const DATE_CONTENT_PREFIX: &'static str = "date = ";
@@ -103,7 +104,12 @@ fn uppercase_first_letter(s: &str) -> String {
 
 fn md_path_to_name(md_path: &PathBuf) -> String {
     let name = md_path.file_stem().unwrap().to_str().unwrap();
-    return name.replace(PAGE_PREFIX, "");
+    
+    let mut name = name.replace(PAGE_PREFIX, "");
+	name = name.replace(POST_PREFIX, "");
+	name = name.replace(UNLISTED_POST_PREFIX, "");
+
+    return name;
 }
 
 fn get_md_files(prefix: &str) -> Vec<PathBuf> {
@@ -220,9 +226,11 @@ fn main() {
     let page_title = "Gonçalo Palaio — Blog";
     let index_title = "Gonçalo's Blog";
     let md_posts = get_md_files(POST_PREFIX);
+    let md_unlisted_posts = get_md_files(UNLISTED_POST_PREFIX);
     let md_pages = get_md_files(PAGE_PREFIX);
 
     let posts = read_posts(&md_posts);
+    let unlisted_posts = read_posts(&md_unlisted_posts);
 
     let header_md_content = create_md_header(&index_title, &md_pages);
 
@@ -233,6 +241,10 @@ fn main() {
     }
 
     for post in &posts {
+        generate_sub_page_post(&header_md_content, &post);
+    }
+    
+    for post in &unlisted_posts {
         generate_sub_page_post(&header_md_content, &post);
     }
 
