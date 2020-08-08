@@ -46,6 +46,8 @@ This is a random list of media that I like.
 - [Mobile Suit Gundam 00](https://www.imdb.com/title/tt1134000/)
 - [Mobile Suit Gundam: Iron-Blooded Orphans](https://www.imdb.com/title/tt5344382/)
 - [Vagabond](https://www.viz.com/vagabond)
+- [Tengen toppa gurren lagann](https://www.imdb.com/title/tt0948103/)
+- [Gunbuster](https://www.imdb.com/title/tt0098492/)
 
 ##### Podcasts
 
