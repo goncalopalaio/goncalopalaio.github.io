@@ -36,6 +36,10 @@ fn get_comrak_options() -> ComrakOptions {
     return ComrakOptions {
         unsafe_: true,
         ext_strikethrough: true,
+        github_pre_lang: true,
+        ext_tasklist: true,
+        ext_table: true,
+        ext_autolink: true,
         ..ComrakOptions::default()
     };
 }
@@ -213,13 +217,14 @@ fn generate_sub_page_post(header_md_content: &str, post: &Post) {
 
     md_content.push_str(header_md_content);
     md_content.push_str(&format!("### {}\n", &post.title));
-    if let Some(date) = &post.date {
-        md_content.push_str(&format!("{} :: {}\n", &date, &post.author));
-    } else {
-        md_content.push_str(&format!("{}\n", &post.author));
-    }
-
+    
     md_content.push_str(&post.content);
+
+	if let Some(date) = &post.date {
+        md_content.push_str(&format!("\n{} :: {}\n", &date, &post.author));
+    } else {
+        md_content.push_str(&format!("\n{}\n", &post.author));
+    }
 
     let content = markdown_to_html(&md_content, &get_comrak_options());
 
