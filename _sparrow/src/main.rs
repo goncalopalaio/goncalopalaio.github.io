@@ -183,6 +183,7 @@ fn generate_index(title: &str, header_md_content: &str, body_md_content: &str) {
 
 fn generate_sub_page(header_md_content: &str, md_path: &PathBuf) {
     let name = md_path_to_name(&md_path);
+    let title = uppercase_first_letter(&name);
     println!("Page: {:?}", name);
 
     let mut md_content = String::new();
@@ -192,7 +193,7 @@ fn generate_sub_page(header_md_content: &str, md_path: &PathBuf) {
 
     let content = markdown_to_html(&md_content, &get_comrak_options());
 
-    create_file(&name, &content, &name);
+    create_file(&title, &content, &name);
 }
 
 fn generate_sub_page_post(header_md_content: &str, post: &Post) {
