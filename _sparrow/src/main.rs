@@ -6,6 +6,9 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::path::PathBuf;
 
+const TEMPLATE_PATH: &'static str = "../_contents/template-index.html";
+const MD_FILES_PATH: &'static str = "../_contents/";
+
 const PAGE_PREFIX: &'static str = "page-";
 const POST_PREFIX: &'static str = "post-";
 const UNLISTED_POST_PREFIX: &'static str = "unlisted-post-";
@@ -113,7 +116,7 @@ fn md_path_to_name(md_path: &PathBuf) -> String {
 }
 
 fn get_md_files(prefix: &str) -> Vec<PathBuf> {
-    return fs::read_dir("contents/")
+    return fs::read_dir(MD_FILES_PATH)
         .unwrap()
         .into_iter()
         .filter(|f| f.is_ok())
@@ -147,7 +150,7 @@ fn create_md_header(title: &str, pages: &Vec<PathBuf>) -> String {
 }
 
 fn create_file(title: &str, content: &str, output_name: &str) {
-    let file = File::open("contents/template-index.html").unwrap();
+    let file = File::open(TEMPLATE_PATH).unwrap();
     let reader = BufReader::new(file);
     let mut contents = String::new();
     for l in reader.lines() {
