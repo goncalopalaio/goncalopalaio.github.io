@@ -48,6 +48,11 @@ This is a random list of media that I like.
 - [Vagabond](https://www.viz.com/vagabond)
 - [Tengen toppa gurren lagann](https://www.imdb.com/title/tt0948103/)
 - [Gunbuster](https://www.imdb.com/title/tt0098492/)
+- [Fate/Zero](https://www.imdb.com/title/tt2051178/)
+- [Zettai Karen Children: The Unlimited - Hyoubu Kyousuke](https://www.imdb.com/title/tt2575708/)
+- [Code Geass](https://www.imdb.com/title/tt0994314/)
+- [20th Century Boys](https://www.viz.com/naoki-urasawa-s-20th-century-boys)
+
 
 ##### Podcasts
 
