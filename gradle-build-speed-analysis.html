@@ -1,23 +1,28 @@
-<!doctype html><html lang="en">	<head>		<meta charset="UTF-8">		<meta http-equiv="content-type" content="text/html; charset=utf-8">		<link rel="shortcut icon" href="img/favicon/green.png">		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">		<title>		Android - Ways to tell your build is slow		</title>		<link rel="stylesheet" href="css/retro.css">	</head>	<body>		<h4><a href="index.html">Gonçalo's Blog</a></h4>
+<!doctype html><html lang="en">	<head>		<meta charset="UTF-8">		<meta http-equiv="content-type" content="text/html; charset=utf-8">		<link rel="shortcut icon" href="img/favicon/green.png">		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">		<title>		Ways to tell your Android build is slow		</title>		<link rel="stylesheet" href="css/retro.css">	</head>	<body>		<h4><a href="index.html">Gonçalo's Blog</a></h4>
 <p><a href="showcase.html">Showcase</a>
 <a href="about.html">About</a></p>
 <hr />
-<h3>Android - Ways to tell your build is slow</h3>
-<h4>Number 1 - Don't even bother</h4>
-<p>Just to set the expectations, your build is already slow. Two seconds to build an empty project? preposterous. Computers are fast, software should also be.</p>
-<h4>Number 2 - Use --profile</h4>
-<p>You can use --profile to get a basic overview of what's taking all of your precious time (<a href="https://developer.android.com/studio/build/optimize-your-build">https://developer.android.com/studio/build/optimize-your-build</a>).</p>
-<h4>Number 3 - Use Gradle Build Scans</h4>
-<p>By using --scan in your build you can get a detailed overview of what tasks ran, which ones ran from cache and took most of the time (<a href="https://guides.gradle.org/performance/#build_scans">https://guides.gradle.org/performance/#build_scans</a>)</p>
-<h4>Number 4 - Go deeper, use Gradle Profiler</h4>
-<p>The most interesting part of Gradle Profiler (<a href="https://github.com/gradle/gradle-profiler">https://github.com/gradle/gradle-profiler</a>) is that you can create multiple scenarios in your project and measure those scenarios individually. You want to know what happens when you change a particular file in your project? Gradle Profiler got you covered. Gradle Profiler will produce a flamegraph or a detailed overview of what happened that you can check in your favorite profiler.</p>
-<p>You now removed all of those tasks that were making the whole project re-compiled again? It's still slow?</p>
-<p>You have multiple options, you can write a compiler that actually prioritizes speed for debug builds or read the first section in this page (sorry for the snarkiness).</p>
-<p>Well, what now?
-Is javac taking all of your time? Not sure if it will help but you can look into the next section.</p>
-<h4>Number 5 - Go even deeper, write a compiler plugin</h4>
+<h3>Ways to tell your Android build is slow</h3>
+<p>This is meant to be a general overview of what you can do to measure how slow is your android Gradle build. Just google around and you'll find a multitude of posts that will give you magical Gradle flags that are now probably deprecated and didn't do much in the first place.</p>
+<p>Be aware that there's the possibility that this gets a little bit ranty.</p>
+<p>So, in how many ways can I measure my build speed?</p>
+<h4>1 - Don't even bother</h4>
+<p>Just to set the expectations, your build is already slow. More than two seconds to build an empty project is ridiculous.</p>
+<h4>2 - Use --profile</h4>
+<p>You can use <strong>--profile</strong> to get a basic overview of what's taking all of your precious time (<a href="https://developer.android.com/studio/build/optimize-your-build">https://developer.android.com/studio/build/optimize-your-build</a>).
+It's a good start but pretty basic.</p>
+<h4>3 - Use Gradle Build Scans</h4>
+<p>Using <strong>--scan</strong> in your build you can get a detailed overview of what tasks ran, which ones ran from cache and took most of the time. Check the details at <a href="https://guides.gradle.org/performance/#build_scans">https://guides.gradle.org/performance/#build_scans</a></p>
+<h4>4 - Use Android Studio Build Analyzer</h4>
+<p>Since Android Studio 4.0 you can now have a pretty graph that tells you which tasks took the longest.</p>
+<h4>5 - Go deeper. use Gradle Profiler</h4>
+<p>The most interesting part of Gradle Profiler (<a href="https://github.com/gradle/gradle-profiler">https://github.com/gradle/gradle-profiler</a>) is that you can create multiple scenarios in your project and measure those scenarios individually. Do you want to know what happens when you change a particular file in your project? Gradle Profiler got you covered. Gradle Profiler will produce for all scenarios a detailed overview of what happened, especially if you use your favourite profiler to look into it.</p>
+<p>You now removed all of those tasks that were making the whole project re-compiled again? It's still slow? The problem is with javac or kotlinc?
+You have multiple options. You can scour the internet for magic Gradle flags, write a compiler that prioritizes speed for debug builds (ha!) or read the next section on this page.</p>
+<h4>6 - Go even deeper. Write a compiler plugin</h4>
 <p>Do you have a lot of files or do you have a lot of code? Both?
-One way of checking what's happening in javac is writing a custom plugin. I think you can do the same for kotlinc but haven't checked in detail.</p>
-<p>TODO - Actually do the research. How to write it. Is there any measurements about where the time is taken and what could be changed?</p>
+One way of checking what's happening in javac is by writing a custom plugin. Certain callbacks that will tell you when a file started being compiled and when it finished. You should be able to do the same for kotlinc but haven't checked in detail.</p>
+<p>It's perfectly reasonable to think that different language features will have different costs. Maybe you have too many files, maybe your 100 deep inheritance class tree is grinding the compiler to a halt. I haven't done proper research into this but I just want to leave this as an option if you're desperate.</p>
+<p>In summary. It's a mess.</p>
 <p>2020-08-08 :: Gonçalo</p>
 		<hr>	</body></html>
