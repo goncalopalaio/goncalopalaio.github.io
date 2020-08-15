@@ -1,0 +1,38 @@
+<!doctype html><html lang="en">	<head>		<meta charset="UTF-8">		<meta http-equiv="content-type" content="text/html; charset=utf-8">		<link rel="shortcut icon" href="img/favicon/green.png">		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">		<title>		Ways to automate interactions in Android		</title>		<link rel="stylesheet" href="css/retro.css">	</head>	<body>		<h4><a href="index.html">Gonçalo's Blog</a></h4>
+<p><a href="showcase.html">Showcase</a>
+<a href="about.html">About</a></p>
+<hr />
+<h3>Ways to automate interactions in Android</h3>
+<p>Here's a list of some of the ways you have to automate interactions in your android device or android application.</p>
+<p>I will not go into detail about most of the command arguments, but in almost all cases they are pretty obvious.</p>
+<h2>1 - adb shell input</h2>
+<p>ADB by itself works pretty well but has a few inconveniences.
+I will list some of them in each section, but in general these commands are pretty slow to execute so they might suit your use case if you need to perform the actions quickly.</p>
+<p>These are the most common commands but there is also <strong>press</strong> and <strong>roll</strong></p>
+<h5>adb shell input text &quot;Some\ Text!&quot;</h5>
+<p><em>What it does</em>: Writes the text in the focused text input like it was being written in the keyboard, character by character.</p>
+<p><em>Cons</em>: You have to escape the spaces and if you need to paste some weird characters like emoji it might not be supported.</p>
+<h5>adb shell input tap 394 2098</h5>
+<p><em>What it does</em>: Performs a touchscreen tap in a specific screen coordinate.</p>
+<p><em>Cons</em>: You have to fumble around into getting the correct coordinates to do what you want.</p>
+<h5>adb shell input swipe 540 1600 540 1800 200</h5>
+<p><em>What it does</em>: Performs a touchscreen swipe from a screen coordinate into another with a set duration.</p>
+<p><em>Cons</em>: Has the same as <strong>input</strong> but now you also have to consider the swipe duration (last argument).</p>
+<h5>adb shell input keyevent 66</h5>
+<p><em>What it does</em>: Android devices have special keys, for example the home button or the volume up and down buttons. This command triggers an event for that key as if they pushed by the user.</p>
+<p><em>Cons</em>: You will have to search for the integer that correspond to they key. You can solve this by creating alias for the values in this file: <a href="https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h">https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h</a></p>
+<h5>adb shell input keyevent press and roll</h5>
+<p>You can look into the remaining commands bu typing:</p>
+<p><code>adb shell input</code></p>
+<p>At this point the remaining are <strong>press</strong> and <strong>roll</strong> which performs actions over the trackball that Android devices used to have.</p>
+<h4>Making adb shell input a little bit better</h4>
+<p>TODO:</p>
+<ul>
+<li><input type="checkbox" disabled="" /> Get-view-centers</li>
+<li><input type="checkbox" disabled="" /> Replicating events - adb shell getevent/sendevent ; custom binary</li>
+<li><input type="checkbox" disabled="" /> Accessibility service.</li>
+<li><input type="checkbox" disabled="" /> uiautomator and starting it from the command line</li>
+<li><input type="checkbox" disabled="" /> Also mention python monkey</li>
+</ul>
+<p>2020-08-15 :: Gonçalo</p>
+		<hr>	</body></html>
