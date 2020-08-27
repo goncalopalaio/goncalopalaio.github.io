@@ -48,7 +48,7 @@ These are the most common commands but there is also **press** and **roll**
 
 *What it does*: Android devices have special keys, for example the home button or the volume up and down buttons. This command triggers an event for that key as if they pushed by the user.
 
-*Cons*: You will have to search for the integer that correspond to the key. You can solve this by creating an alias for the values in this file: https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h
+*Cons*: You will have to search for the integer that correspond to the key. You can solve this by creating an alias for the values in this file: [input-event-codes.h](https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h)
 
 # Making adb shell input a little bit better
 
@@ -99,9 +99,9 @@ There's a lot of scattered information on this throughout the internet.
 There are three limitations by default that prevent you simply saving what getevent gives you and piping it directly to sendevent.
 First of all, getevent will not provide you timing event so you know the user touched the screen, but not at what point after you started recording the events. Second, getevent uses a different format than sendevent so you will have to convert the events first.
 
-You can look at the hex representation of getevent events at https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h
+You can look at the hex representation of getevent events at [input-event-codes.h](https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h)
 
-The third limitation is that sendevent is slow to send events as it looks like it was never meant to be used to send multiple events. It opens the file descriptor that represents the device sensor, sends a single event and then closes the file descriptor (see https://stackoverflow.com/questions/54505498/adb-drag-vs-swipe-manual-drag-via-events/54547196#54547196).
+The third limitation is that sendevent is slow to send events as it looks like it was never meant to be used to send multiple events. It opens the file descriptor that represents the device sensor, sends a single event and then closes the file descriptor (see [stackoverflow/adb-drag-vs-swipe-manual-drag-via-events](https://stackoverflow.com/questions/54505498/adb-drag-vs-swipe-manual-drag-via-events/54547196#54547196)).
 
 To get around this, a few smart folks had the idea of recompiling sendevent so it would receive several events and write in one shot to the device sensor file descriptor.
 
@@ -115,7 +115,7 @@ https://github.com/Cartucho/android-touch-record-replay/
 
 https://github.com/rils/ARP/wiki
 
-I've also found this by accident in an android internal tool: https://cs.android.com/android/platform/superproject/+/master:external/autotest/client/bin/input/ but surely it won't be as easy to make it work.
+I've also found this by accident in an android internal tool: [android/autotest/client/bin/input/](https://cs.android.com/android/platform/superproject/+/master:external/autotest/client/bin/input/) but surely it won't be as easy to make it work.
 
 # Monkeyrunner
 
@@ -147,12 +147,9 @@ For this you have to create a separate project and run your tests which will ins
 	adb shell am instrument -w -r -e debug false -e class 'com.example.ExampleTest' com.example.test/androidx.test.runner.AndroidJUnitRunner
 
 
-
 ### Make the tests dynamic
 
-Instead of having a particular set of actions encoded in your tests. You can also make it a little more dynamic.
-
-You can pass custom parameters to the test. With this you can pretty much do whatever you want. For example you can have a single test and according to the parameters perform different actions.
+Instead of having a particular set of actions encoded in your tests you can pass custom parameters to the test and have a single test perform different actions.
 
 Here’s an example project that I created:
 
@@ -162,6 +159,6 @@ You could even embed a small language interpreter, for example LUA, add some bin
 
 [xiaocong/uiautomator](https://github.com/xiaocong/uiautomator)
 
-Which as far as I know, starts a test and blocks it forever. That way you can have a server running continuously in the device that is ready to receive commands from an external python program in a RPC kind of way.
+Which as far as I know starts a test and blocks it forever to receive commands. You then have server running in the device that will do what an external python program tells it to in a RPC kind of way.
 
 The downside that I’ve noticed when I used it is that it has to do communication both ways and it can be slow to do it.
