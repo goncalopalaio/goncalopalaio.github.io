@@ -1,11 +1,11 @@
-<!doctype html><html lang="en">	<head>		<meta charset="UTF-8">		<meta http-equiv="content-type" content="text/html; charset=utf-8">		<link rel="shortcut icon" href="img/favicon/green.png">		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">		<title>		Scripting with automation in Android		</title>		<link rel="stylesheet" href="css/retro.css">	</head>	<body>		<h4><a href="index.html">Gonçalo's Blog</a></h4>
+<!doctype html><html lang="en">	<head>		<meta charset="UTF-8">		<meta http-equiv="content-type" content="text/html; charset=utf-8">		<link rel="shortcut icon" href="img/favicon/green.png">		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">		<title>		Scripting with automation in Android - Part 1		</title>		<link rel="stylesheet" href="css/retro.css">	</head>	<body>		<h4><a href="index.html">Gonçalo's Blog</a></h4>
 <p><a href="showcase.html">Showcase</a>
 <a href="about.html">About</a></p>
 <hr />
-<h3>Scripting with automation in Android</h3>
+<h3>Scripting with automation in Android - Part 1</h3>
 <p>What do you do when you want to automate something during development but you do not necessarily want to leave behind changes in the project? Or maybe you don’t even have instrumented tests configured?</p>
-<p>I think this is a mostly unexplored topic since it’s pretty non-standard. I will mostly ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it's not required that you make changes to your project.</p>
-<p>I will try to make this as brief as I can so I will not delve into what each command argument means.</p>
+<p>I think this is a mostly unexplored topic since it’s pretty non-standard. I will mostly ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it is not required that you make changes to your project.</p>
+<p>I will try to make this as brief as I can. I won't delve too much on what each command argument means.</p>
 <p>Let’s start with the most known ADB commands you can use.</p>
 <h1>1 - Input with ADB</h1>
 <p><code>adb shell input</code></p>
@@ -29,35 +29,54 @@ I will list some of them in each section, but in general these commands are pret
 <p><em>What it does</em>: Android devices have special keys, for example the home button or the volume up and down buttons. This command triggers an event for that key as if they pushed by the user.</p>
 <p><em>Cons</em>: You will have to search for the integer that correspond to the key. You can solve this by creating an alias for the values in this file: <a href="https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h">https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h</a></p>
 <h1>Making adb shell input a little bit better</h1>
-<p>My biggest issue with adb shell input is that I always have to out of my way to find the screen coordinates by enabling the setting in the developer options that shows the coordinates on the screen.</p>
+<p>If you really need string several of those commands together you will find that you most likely need to find where particular views are on the screen.
+My biggest issue with adb shell input is that I always have to out of my way to find the screen coordinates by enabling the setting in the developer options that shows the coordinates on the screen.</p>
 <p>I normally use:</p>
-<p>==========</p>
-<p>adb automator command #TODO</p>
-<p>==========</p>
-<p>This will print the view tree as xml and will allow you to look for the screen coordinates of the particular view that you want.</p>
-<p>Another alternative is:</p>
-<h1>==========
-adb shell getevent #TODO</h1>
-<p>In case of getevent, you will get a log of the events that the device sensors are receiving, but you will notice that the values are in hexadecimal so you'll have to do that conversion first.</p>
+<pre><code>adb shell uiautomator dump --compressed &amp;&amp; adb pull /sdcard/window_dump.xml views.xml &amp;&amp; xmllint --format views.xml
+</code></pre>
+<p>Which it will print the view tree as xml and will allow you to look for the screen coordinates of a particular view that you want, but you still have to search around the xml for what you want.</p>
+<p>There might be some issues when dealing with overlapping activities if you simply run this command. It will work for most cases but if it doesn't you can also use <a href="https://developer.android.com/studio/debug/layout-inspector">Layout Inspector</a> in Android Studio.</p>
+<p>Another alternative to check the screen coordinates is:</p>
+<pre><code>adb shell getevent -l
+</code></pre>
+<p>You will get a log of the events that the device sensors are receiving. You will notice that the values are in hexadecimal so you'll have to do that conversion first.</p>
 <p>To make things a little better for myself I've created two scripts for both cases:</p>
+<pre><code>python3 adb-get-view-center.py -i &quot;EnterTitle&quot;
+	# Device: b8435fb0
+	adb -s b8435fb0 shell input tap 720 398
+
+adb shell getevent -l | python3 adb-getevent.py
+	X -&gt; 950
+	Y -&gt; 1769
+	X -&gt; 939
+	Y -&gt; 1754
+</code></pre>
+<p>Source in: <a href="https://github.com/goncalopalaio/basher-py">basher-py</a></p>
 <ul>
-<li>get-view-centers will give you the screen coordinates of the view id or view text that you provide as an argument to the script.</li>
-<li>==TODO script name== will print the screencordinates as an integer. There's an alternative mode, but more on that in the following section.</li>
+<li><em>adb-get-view-center</em> will give you the screen coordinates of the view id or view text that you provide as an argument to the script.</li>
+<li><em>adb-getevent</em> will print the screencordinates as an integer. There's an alternative mode, but more on that in the following section.</li>
 </ul>
+<p>You can also get additional events with:</p>
+<pre><code>adb shell uiautomator events
+</code></pre>
+<p>Which lists some of the accessibility events occurring at the moment such as if any view content changed in the screen or anything was scrolled in the screen.</p>
 <h2>Replicating events through getevent and sendevent</h2>
 <p>There's a lot of scattered information on this throughout the internet.</p>
 <p>There are three limitations by default that prevent you simply saving what getevent gives you and piping it directly to sendevent.
 First of all, getevent will not provide you timing event so you know the user touched the screen, but not at what point after you started recording the events. Second, getevent uses a different format than sendevent so you will have to convert the events first.</p>
-<p>You can look at the hex representation of getevent events at ==TODO link to file==</p>
-<p>The third limitation is that sendevent is slow to send events as it looks like it was never meant to be used to send multiple events.
-It opens the file descriptor that represents the device sensor, sends a single event and then closes the file descriptor. See ==TODO Link to source==</p>
-<p>To get around this, a few smart folks had the idea of recompiling sendevent so it would receive several events and writte in one shot to the device sensor file descriptor.</p>
-<p>So here's the thing, you cannot have executables in the internal storage of the device. It makes sense you wouldn't be able to. But how did they get around this? Apparently you're allowed to push to ==TODO temp path== and then call the executable with adb (not from the device itself).</p>
-<p>You push the executable and then run:</p>
-<p>adb shell mysendevent ==TODO replace with actual command==</p>
-<p>These are the two places where I saw this being done:</p>
-<p>==TODO links to mysendevent repos==</p>
-<h1>==TODO python monkey==</h1>
+<p>You can look at the hex representation of getevent events at <a href="https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h">https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h</a></p>
+<p>The third limitation is that sendevent is slow to send events as it looks like it was never meant to be used to send multiple events. It opens the file descriptor that represents the device sensor, sends a single event and then closes the file descriptor (see <a href="https://stackoverflow.com/questions/54505498/adb-drag-vs-swipe-manual-drag-via-events/54547196#54547196">https://stackoverflow.com/questions/54505498/adb-drag-vs-swipe-manual-drag-via-events/54547196#54547196</a>).</p>
+<p>To get around this, a few smart folks had the idea of recompiling sendevent so it would receive several events and write in one shot to the device sensor file descriptor.</p>
+<p>So here's the thing, you cannot have executables in the internal storage of the device (assuming that your device is not rooted). It makes sense you wouldn't be able to. But how to get around this? Apparently you're allowed to push to <em>/data/local/tmp/</em> and then call the executable with adb (not from the device itself).</p>
+<pre><code>adb push myprogram /data/local/tmp/ &amp;&amp; adb shell /data/local/tmp/myprogram
+</code></pre>
+<p>These are the two main examples where I saw this being done:</p>
+<p><a href="https://github.com/Cartucho/android-touch-record-replay/">https://github.com/Cartucho/android-touch-record-replay/</a></p>
+<p><a href="https://github.com/rils/ARP/wiki">https://github.com/rils/ARP/wiki</a></p>
+<p>I've also found this by accident in an android internal tool: <a href="https://cs.android.com/android/platform/superproject/+/master:external/autotest/client/bin/input/">https://cs.android.com/android/platform/superproject/+/master:external/autotest/client/bin/input/</a> but surely it won't be as easy to make it work.</p>
+<h1>Monkeyrunner</h1>
+<p>You also have <a href="https://developer.android.com/studio/test/monkeyrunner">monkeyrunner</a> which is a python API to control your devices. Not to be confused with <a href="https://developer.android.com/studio/test/monkey">Monkey</a>, another program that generates random user events in the device to perform stress testing or <em>monkey testing</em> as some people call it.</p>
+<p>You can simulate taps, drags, write text, launch activities, take screenshots and compare screenshots. It seems perfectly fine, I don't have much experience with it.</p>
 <h1>Automation suites in the device</h1>
 <p>Even if you do not include instrumented tests in your application project there are other ways to get access to your device.</p>
 <h2>Creating a accessibility service</h2>
@@ -66,13 +85,11 @@ While active, it will continuously run and look and do what you want with the vi
 Keep in mind that this will go through all of your views attributes and might even reveal some problems dealing with accessibility services. That might even be a bonus.</p>
 <p>==TODO link to example project==</p>
 <h2>Using UiAutomator</h2>
-<p>This is the most flexible of the previous options. You pretty much have control of all of your device. The only downside over the accessibilty service is that you have to start the actions explicitly.</p>
+<p>This is the most flexible of the previous options. You pretty much have control of all of your device. The only downside over the accessibility service is that you have to start the actions explicitly.</p>
 <p>This is normally used in a project so you can do interactions outside of your application but you can also take advantage of this and make it a generic way of performing any action at any time.</p>
 <p>For this you have to create a separate project and run your tests which will install a special test apk. This creates a special entry point for the test that you wrote and allows you to start a specific test:</p>
-<p>==</p>
-<p>#TODO command to initiate a specific test in a test suite
-This is meant to be a project where multiple tests exist.</p>
-<p>==</p>
+<pre><code>adb shell am instrument -w -r -e debug false -e class 'com.example.ExampleTest' com.example.test/androidx.test.runner.AndroidJUnitRunner
+</code></pre>
 <h3>Make the tests dynamic</h3>
 <p>Instead of having a particular set of actions encoded in your tests. You can also make it a little more dynamic.</p>
 <p>You can pass custom parameters to the test. With this you can pretty much do whatever you want. For example you can have a single test and according to the parameters perform different actions.</p>
