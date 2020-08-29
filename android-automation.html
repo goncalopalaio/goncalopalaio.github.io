@@ -1,33 +1,71 @@
-<!doctype html><html lang="en">	<head>		<meta charset="UTF-8">		<meta http-equiv="content-type" content="text/html; charset=utf-8">		<link rel="shortcut icon" href="img/favicon/green.png">		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">		<title>		Scripting with automation in Android - Part 1		</title>		<link rel="stylesheet" href="css/retro.css">	</head>	<body>		<h4><a href="index.html">Gonçalo's Blog</a></h4>
+<!doctype html><html lang="en">	<head>		<meta charset="UTF-8">		<meta http-equiv="content-type" content="text/html; charset=utf-8">		<link rel="shortcut icon" href="img/favicon/green.png">		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">		<title>		Scripting with automation in Android - Part 1		</title>		<link rel="stylesheet" href="css/retro.css">		<link rel="stylesheet" href="css/custom.css">	</head>	<body>		<h4><a href="index.html">Gonçalo's Blog</a></h4>
 <p><a href="showcase.html">Showcase</a>
 <a href="about.html">About</a></p>
 <hr />
 <h3>Scripting with automation in Android - Part 1</h3>
-<p>What do you do when you want to automate something during development but you do not necessarily want to leave behind changes in the project? Or maybe you don’t even have instrumented tests configured?</p>
-<p>I think this is a mostly unexplored topic since it’s pretty non-standard. I will mostly ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it is not required that you make changes to your project.</p>
+<p>What do you do when you want to automate something during development but you do not want to leave behind changes in the project? Or you don’t even have instrumented tests configured?</p>
+<p>I think this is an unexplored topic since it’s pretty non-standard. I will ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it is not required that you make changes to your project.</p>
 <p>I will try to make this as brief as I can. I won't delve too much on what each command argument means.</p>
-<p>Let’s start with the most known ADB commands you can use.</p>
-<h1>1 - Input with ADB</h1>
-<p><code>adb shell input</code></p>
-<p>ADB by itself works pretty well but has a few inconveniences.
-I will list some of them in each section, but in general these commands are pretty slow to execute so they might not suit your use case if you need to perform the actions quickly.</p>
-<p>These are the most common commands but there is also <strong>press</strong> and <strong>roll</strong></p>
-<h2>Text</h2>
-<p><code>adb shell input text &quot;Some\ Text!&quot;</code></p>
-<p><em>What it does</em>: Writes the text in the focused text input like it was being written in the keyboard, character by character.</p>
-<p><em>Cons</em>: You have to escape the spaces and if you need to paste some weird characters like emoji it might not be supported.</p>
-<h2>Tap</h2>
-<p><code>adb shell input tap 394 2098</code></p>
-<p><em>What it does</em>: Performs a touchscreen tap in a specific screen coordinate.</p>
-<p><em>Cons</em>: You have to fumble around into getting the correct coordinates to do what you want.</p>
-<h2>Swipe</h2>
-<p><code>adb shell input swipe 540 1600 540 1800 200</code></p>
-<p><em>What it does</em>: Performs a touchscreen swipe from a screen coordinate into another with a set duration.</p>
-<p><em>Cons</em>: Has the same as <strong>input</strong> but now you also have to consider the swipe duration (last argument).</p>
-<h2>Key events</h2>
-<p><code>adb shell input keyevent 66</code></p>
-<p><em>What it does</em>: Android devices have special keys, for example the home button or the volume up and down buttons. This command triggers an event for that key as if they pushed by the user.</p>
-<p><em>Cons</em>: You will have to search for the integer that correspond to the key. You can solve this by creating an alias for the values in this file: <a href="https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h">input-event-codes.h</a></p>
+<p>Let's build arbitrary examples using an application from Play Store.</p>
+<p>I will use <a href="https://play.google.com/store/apps/details?id=com.omgodse.notally">Notally | Minimalist Notes</a>, a fine note taking application.</p>
+<h1>1 - Using <code>adb shell input</code></h1>
+<p>Let's say I wanted to create a new note after opening the application.</p>
+<figure class="video_container">
+  <video controls="true" allowfullscreen="true" poster="vid/adb_input_1.jpg">
+	<source src="vid/adb_input_1.mp4" type="video/mp4">
+	<source src="vid/adb_input_1.webm" type="video/webm">
+		<source src="vid/adb_input_1.ogg" type="video/ogg">
+  </video>
+</figure>
+<h4>Launching an application</h4>
+<p>First, you need to launch the application:</p>
+<pre><code>PACKAGE=&quot;com.omgodse.notally&quot;
+
+# One of the ways to launch an application with its package name
+adb shell monkey -p $PACKAGE -c android.intent.category.LAUNCHER 1
+
+# Alternative:
+# adb shell pm dump $PACKAGE | grep -E &quot;intent=.*$PACKAGE&quot;
+#
+# &gt; intent={act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.omgodse.notally/.activities.MainActivity}
+#
+# adb shell am start -n &quot;com.omgodse.notally/.activities.MainActivity&quot; -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+</code></pre>
+<h4>Tapping views</h4>
+<p>To create a note you have to tap the floating action button at the bottom. To do that you need its screen coordinates.</p>
+<p>Either dump the view layout:</p>
+<pre><code>adb shell uiautomator dump --compressed &amp;&amp; adb pull /sdcard/window_dump.xml views.xml &amp;&amp; xmllint --format views.xml
+
+ &gt; &lt;node NAF=&quot;true&quot; index=&quot;1&quot; text=&quot;&quot; resource-id=&quot;com.omgodse.notally:id/TakeNoteFAB&quot; class=&quot;android.widget.ImageButton&quot; package=&quot;com.omgodse.notally&quot; content-desc=&quot;&quot; checkable=&quot;false&quot; checked=&quot;false&quot; clickable=&quot;true&quot; enabled=&quot;true&quot; focusable=&quot;true&quot; focused=&quot;false&quot; scrollable=&quot;false&quot; long-clickable=&quot;false&quot; password=&quot;false&quot; selected=&quot;false&quot; bounds=&quot;[1188,2812][1384,3008]&quot;/&gt;
+</code></pre>
+<p>The view bounds are 1188,2812 to 1384,3008. You will need to tap somewhere around the center of the view bounds:</p>
+<pre><code>adb -s b8435fb0 shell input tap 1286 2910
+</code></pre>
+<p>I've created a small script to make this process a little bit easier: <em>adb-get-view-center.py</em> <a href="https://github.com/goncalopalaio/basher-py">here</a>.</p>
+<pre><code># You only need to provide the view id or the text the view has. This script will the dump the views give you the view center.
+
+python3 adb-get-view-center.py -i TakeNoteFAB
+&gt; adb shell input tap 1286 2910
+
+python3 adb-get-view-center.py -i &quot;Take note&quot;
+&gt; adb -s b8435fb0 shell input tap 720 2966
+</code></pre>
+<h4>Writing text</h4>
+<p>Writing text is straightforward:</p>
+<pre><code>adb shell input text &quot;$RANDOM\ This\ Is\ Escaped\ Text!!&quot;
+</code></pre>
+<p>You will need to escape the text and you're limited to ASCII characters, you're out of luck if you need to write complex characters.</p>
+<h4>Key events</h4>
+<p>If you want to use the special keys that every device has you use:</p>
+<pre><code>KEYCODE_BACK=4
+adb shell input keyevent $KEYCODE_BACK
+</code></pre>
+<p>You'll see that you need to know the event codes that each key corresponds. You can see the list of valid key codes here: <a href="https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/KeyEvent.java">KeyEvent.java</a></p>
+<h4>Other commands</h4>
+<p>There's other commands that you can list by running:</p>
+<pre><code>adb shell input
+</code></pre>
+<p>For example you can simulate screen swipes by providing the duration, start and end coordinates of the swipe. I never found <em>swipe</em> to be useful, you're better off getting an alternative if you need to swipe or scroll a particular view reliably (see below).</p>
 <h1>Making adb shell input a little bit better</h1>
 <p>If you really need string several of those commands together you will find that you most likely need to find where particular views are on the screen.
 My biggest issue with adb shell input is that I always have to out of my way to find the screen coordinates by enabling the setting in the developer options that shows the coordinates on the screen.</p>
