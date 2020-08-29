@@ -1,54 +1,94 @@
 title = Scripting with automation in Android - Part 1
 date = 15-08-2020
 
-What do you do when you want to automate something during development but you do not necessarily want to leave behind changes in the project? Or maybe you don’t even have instrumented tests configured?
+What do you do when you want to automate something during development but you do not want to leave behind changes in the project? Or you don’t even have instrumented tests configured?
 
-I think this is a mostly unexplored topic since it’s pretty non-standard. I will mostly ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it is not required that you make changes to your project.
+I think this is an unexplored topic since it’s pretty non-standard. I will ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it is not required that you make changes to your project.
 
 I will try to make this as brief as I can. I won't delve too much on what each command argument means.
 
-Let’s start with the most known ADB commands you can use.
+Let's build arbitrary examples using an application from Play Store.
 
-# 1 - Input with ADB
+I will use [Notally | Minimalist Notes](https://play.google.com/store/apps/details?id=com.omgodse.notally), a fine note taking application.
 
-`adb shell input`
 
-ADB by itself works pretty well but has a few inconveniences.
-I will list some of them in each section, but in general these commands are pretty slow to execute so they might not suit your use case if you need to perform the actions quickly.
+# 1 - Using `adb shell input`
 
-These are the most common commands but there is also **press** and **roll**
+Let's say I wanted to create a new note after opening the application.
 
-## Text
+<figure class="video_container">
+  <video controls="true" allowfullscreen="true" poster="vid/adb_input_1.jpg">
+	<source src="vid/adb_input_1.mp4" type="video/mp4">
+	<source src="vid/adb_input_1.webm" type="video/webm">
+		<source src="vid/adb_input_1.ogg" type="video/ogg">
+  </video>
+</figure>
 
-`adb shell input text "Some\ Text!"`
+#### Launching an application
 
-*What it does*: Writes the text in the focused text input like it was being written in the keyboard, character by character.
+First, you need to launch the application:
 
-*Cons*: You have to escape the spaces and if you need to paste some weird characters like emoji it might not be supported.
+	PACKAGE="com.omgodse.notally"
 
-## Tap
+	# One of the ways to launch an application with its package name
+	adb shell monkey -p $PACKAGE -c android.intent.category.LAUNCHER 1
+	
+	# Alternative:
+	# adb shell pm dump $PACKAGE | grep -E "intent=.*$PACKAGE"
+	#
+	# > intent={act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.omgodse.notally/.activities.MainActivity}
+	#
+	# adb shell am start -n "com.omgodse.notally/.activities.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
 
-`adb shell input tap 394 2098`
+#### Tapping views
 
-*What it does*: Performs a touchscreen tap in a specific screen coordinate.
+To create a note you have to tap the floating action button at the bottom. To do that you need its screen coordinates.
 
-*Cons*: You have to fumble around into getting the correct coordinates to do what you want.
+Either dump the view layout:
 
-## Swipe
+	adb shell uiautomator dump --compressed && adb pull /sdcard/window_dump.xml views.xml && xmllint --format views.xml
+	
+	 > <node NAF="true" index="1" text="" resource-id="com.omgodse.notally:id/TakeNoteFAB" class="android.widget.ImageButton" package="com.omgodse.notally" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" bounds="[1188,2812][1384,3008]"/>
 
-`adb shell input swipe 540 1600 540 1800 200`
+The view bounds are 1188,2812 to 1384,3008. You will need to tap somewhere around the center of the view bounds:
 
-*What it does*: Performs a touchscreen swipe from a screen coordinate into another with a set duration.
+	adb -s b8435fb0 shell input tap 1286 2910
 
-*Cons*: Has the same as **input** but now you also have to consider the swipe duration (last argument).
+I've created a small script to make this process a little bit easier: *adb-get-view-center.py* [here](https://github.com/goncalopalaio/basher-py).
 
-## Key events
+	# You only need to provide the view id or the text the view has. This script will the dump the views give you the view center.
 
-`adb shell input keyevent 66`
+	python3 adb-get-view-center.py -i TakeNoteFAB
+	> adb shell input tap 1286 2910
+	
+	python3 adb-get-view-center.py -i "Take note"
+	> adb -s b8435fb0 shell input tap 720 2966
+	
+#### Writing text
 
-*What it does*: Android devices have special keys, for example the home button or the volume up and down buttons. This command triggers an event for that key as if they pushed by the user.
+Writing text is straightforward:
 
-*Cons*: You will have to search for the integer that correspond to the key. You can solve this by creating an alias for the values in this file: [input-event-codes.h](https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h)
+	adb shell input text "$RANDOM\ This\ Is\ Escaped\ Text!!"
+
+You will need to escape the text and you're limited to ASCII characters, you're out of luck if you need to write complex characters. 
+
+#### Key events
+
+If you want to use the special keys that every device has you use:
+
+	KEYCODE_BACK=4
+	adb shell input keyevent $KEYCODE_BACK
+
+You'll see that you need to know the event codes that each key corresponds. You can see the list of valid key codes here: [KeyEvent.java](https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/KeyEvent.java)
+
+#### Other commands
+
+There's other commands that you can list by running:
+	
+	adb shell input
+
+For example you can simulate screen swipes by providing the duration, start and end coordinates of the swipe. I never found *swipe* to be useful, you're better off getting an alternative if you need to swipe or scroll a particular view reliably (see below).
+ 
 
 # Making adb shell input a little bit better
 
