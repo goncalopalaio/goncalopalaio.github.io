@@ -5,12 +5,65 @@ What do you do when you want to automate something during development but you do
 
 I think this is an unexplored topic since it’s pretty non-standard. I will ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it is not required that you make changes to your project.
 
-I will try to make this as brief as I can. I won't delve too much on what each command argument means.
+I will try to make this as brief as I can. I won't delve too much on what each command argument means. I've re-written this post at least two times, 
 
 Let's build arbitrary examples using an application from Play Store.
 
 I will use [Notally | Minimalist Notes](https://play.google.com/store/apps/details?id=com.omgodse.notally), a fine note taking application.
 
+	
+	##################################
+	#### Create a note in Notally ####
+	##################################
+	
+	
+	PACKAGE="com.omgodse.notally"
+	
+	##############################
+	#### Open the application ####
+	##############################
+	
+	# One of the ways to launch an application with its package name
+	adb shell monkey -p $PACKAGE -c android.intent.category.LAUNCHER 1
+	
+	# Alternative:
+	#
+	# ➜ adb shell pm dump $PACKAGE | grep -E "intent=.*$PACKAGE"
+	# intent={act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.omgodse.notally/.activities.MainActivity}
+	#
+	# adb shell am start -n "com.omgodse.notally/.activities.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+	
+	###############################
+	#### Find out where to tap ####
+	###############################
+	
+	# adb shell uiautomator dump --compressed && adb pull /sdcard/window_dump.xml views.xml && xmllint --format views.xml
+	#
+	# > <node (...) resource-id="com.omgodse.notally:id/TakeNoteFAB" (...) bounds="[1188,2812][1384,3008]"/>
+	# X = (1188 + 1384) / 2 = 1286 
+	# Y = (2812 + 3008) / 2 = 2910
+	
+	# OR
+	
+	# python3 adb-get-view-center.py -i TakeNoteFAB
+	#
+	# > adb shell input tap 1286 2910
+	
+	#############################
+	#### Perform the actions ####
+	#############################
+	
+	# Open new note screen
+	adb shell input tap 1286 2910
+	adb shell input tap 720 2966
+	
+	adb shell input text "$RANDOM\ This\ Is\ Escaped\ Text!!"
+	
+	KEYCODE_BACK=4
+	# Close the keyboard
+	adb shell input keyevent $KEYCODE_BACK
+	# Go back
+	adb shell input keyevent $KEYCODE_BACK
 
 # 1 - Using `adb shell input`
 
