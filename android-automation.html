@@ -5,9 +5,62 @@
 <h3>Scripting with automation in Android - Part 1</h3>
 <p>What do you do when you want to automate something during development but you do not want to leave behind changes in the project? Or you don’t even have instrumented tests configured?</p>
 <p>I think this is an unexplored topic since it’s pretty non-standard. I will ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it is not required that you make changes to your project.</p>
-<p>I will try to make this as brief as I can. I won't delve too much on what each command argument means.</p>
+<p>I will try to make this as brief as I can. I won't delve too much on what each command argument means. I've re-written this post at least two times,</p>
 <p>Let's build arbitrary examples using an application from Play Store.</p>
 <p>I will use <a href="https://play.google.com/store/apps/details?id=com.omgodse.notally">Notally | Minimalist Notes</a>, a fine note taking application.</p>
+<pre><code>##################################
+#### Create a note in Notally ####
+##################################
+
+
+PACKAGE=&quot;com.omgodse.notally&quot;
+
+##############################
+#### Open the application ####
+##############################
+
+# One of the ways to launch an application with its package name
+adb shell monkey -p $PACKAGE -c android.intent.category.LAUNCHER 1
+
+# Alternative:
+#
+# ➜ adb shell pm dump $PACKAGE | grep -E &quot;intent=.*$PACKAGE&quot;
+# intent={act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.omgodse.notally/.activities.MainActivity}
+#
+# adb shell am start -n &quot;com.omgodse.notally/.activities.MainActivity&quot; -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+
+###############################
+#### Find out where to tap ####
+###############################
+
+# adb shell uiautomator dump --compressed &amp;&amp; adb pull /sdcard/window_dump.xml views.xml &amp;&amp; xmllint --format views.xml
+#
+# &gt; &lt;node (...) resource-id=&quot;com.omgodse.notally:id/TakeNoteFAB&quot; (...) bounds=&quot;[1188,2812][1384,3008]&quot;/&gt;
+# X = (1188 + 1384) / 2 = 1286 
+# Y = (2812 + 3008) / 2 = 2910
+
+# OR
+
+# python3 adb-get-view-center.py -i TakeNoteFAB
+#
+# &gt; adb shell input tap 1286 2910
+
+#############################
+#### Perform the actions ####
+#############################
+
+# Open new note screen
+adb shell input tap 1286 2910
+adb shell input tap 720 2966
+
+adb shell input text &quot;$RANDOM\ This\ Is\ Escaped\ Text!!&quot;
+
+KEYCODE_BACK=4
+# Close the keyboard
+adb shell input keyevent $KEYCODE_BACK
+# Go back
+adb shell input keyevent $KEYCODE_BACK
+</code></pre>
 <h1>1 - Using <code>adb shell input</code></h1>
 <p>Let's say I wanted to create a new note after opening the application.</p>
 <figure class="video_container">
