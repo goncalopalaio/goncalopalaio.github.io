@@ -1,6 +1,18 @@
 title = Scripting with automation in Android - Part 1
 date = 15-08-2020
 
+NOTES:
+
+	https://cs.android.com/android/platform/superproject/+/master:frameworks/base/cmds/uiautomator/cmds/uiautomator/src/com/android/commands/uiautomator/EventsCommand.java
+
+	You can listen accessibility events through a test -> AccessibilityLoggerTest
+
+	projectos-pessoais/DynamicTester [master●] » adbw install -r -t app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+
+	https://www.tooploox.com/blog/unusual-ways-using-android-accessibility-services
+
+
+
 What do you do when you want to automate something during development but you do not want to leave behind changes in the project? Or you don’t even have instrumented tests configured?
 
 I think this is an unexplored topic since it’s pretty non-standard. I will ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it is not required that you make changes to your project.
