@@ -1,85 +1,16 @@
-title = Scripting with automation in Android - Part 1
+title = Scripting with automation in Android
 date = 15-08-2020
 
-NOTES:
+Let's start by saying that you should always strive to have  unit and instrumented tests in your projects. But for cases where you see yourself doing the same actions over and over again while developing, there are ways to automate those actions.
 
-	https://cs.android.com/android/platform/superproject/+/master:frameworks/base/cmds/uiautomator/cmds/uiautomator/src/com/android/commands/uiautomator/EventsCommand.java
-
-	You can listen accessibility events through a test -> AccessibilityLoggerTest
-
-	projectos-pessoais/DynamicTester [master●] » adbw install -r -t app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
-
-	https://www.tooploox.com/blog/unusual-ways-using-android-accessibility-services
+Some of the sections assume that you have some experience with android development.
 
 
+# 1 - Using `adb shell`
 
-What do you do when you want to automate something during development but you do not want to leave behind changes in the project? Or you don’t even have instrumented tests configured?
+There are a multitude of commands that `adb shell` that enables actions over the connected device.
 
-I think this is an unexplored topic since it’s pretty non-standard. I will ignore the fact that you could add uiautomator or espresso to your project and perform your actions there. What I am interested is in solutions where it is not required that you make changes to your project.
-
-I will try to make this as brief as I can. I won't delve too much on what each command argument means. I've re-written this post at least two times, 
-
-Let's build arbitrary examples using an application from Play Store.
-
-I will use [Notally | Minimalist Notes](https://play.google.com/store/apps/details?id=com.omgodse.notally), a fine note taking application.
-
-	
-	##################################
-	#### Create a note in Notally ####
-	##################################
-	
-	
-	PACKAGE="com.omgodse.notally"
-	
-	##############################
-	#### Open the application ####
-	##############################
-	
-	# One of the ways to launch an application with its package name
-	adb shell monkey -p $PACKAGE -c android.intent.category.LAUNCHER 1
-	
-	# Alternative:
-	#
-	# ➜ adb shell pm dump $PACKAGE | grep -E "intent=.*$PACKAGE"
-	# intent={act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.omgodse.notally/.activities.MainActivity}
-	#
-	# adb shell am start -n "com.omgodse.notally/.activities.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
-	
-	###############################
-	#### Find out where to tap ####
-	###############################
-	
-	# adb shell uiautomator dump --compressed && adb pull /sdcard/window_dump.xml views.xml && xmllint --format views.xml
-	#
-	# > <node (...) resource-id="com.omgodse.notally:id/TakeNoteFAB" (...) bounds="[1188,2812][1384,3008]"/>
-	# X = (1188 + 1384) / 2 = 1286 
-	# Y = (2812 + 3008) / 2 = 2910
-	
-	# OR
-	
-	# python3 adb-get-view-center.py -i TakeNoteFAB
-	#
-	# > adb shell input tap 1286 2910
-	
-	#############################
-	#### Perform the actions ####
-	#############################
-	
-	# Open new note screen
-	adb shell input tap 1286 2910
-	adb shell input tap 720 2966
-	
-	adb shell input text "$RANDOM\ This\ Is\ Escaped\ Text!!"
-	
-	KEYCODE_BACK=4
-	# Close the keyboard
-	adb shell input keyevent $KEYCODE_BACK
-	# Go back
-	adb shell input keyevent $KEYCODE_BACK
-
-# 1 - Using `adb shell input`
-
-Let's say I wanted to create a new note after opening the application.
+I've created this [Example](https://gist.github.com/goncalopalaio/1326ad423353485d64f71139b33235fd) that launches and creates a new note in [Notally | Minimalist Notes](https://play.google.com/store/apps/details?id=com.omgodse.notally).
 
 <figure class="video_container">
   <video controls="true" allowfullscreen="true" poster="vid/adb_input_1.jpg">
@@ -89,96 +20,18 @@ Let's say I wanted to create a new note after opening the application.
   </video>
 </figure>
 
-#### Launching an application
+The downside of this approach is that you rely on the view coordinates, for that reason, the script must be adapted to each device. Using `adb shell uiautomator dump` is one of the easiest ways to check at which coordinates a view is (the other is the [Android Studio Layout Inspector](https://developer.android.com/studio/debug/layout-inspector)).
 
-First, you need to launch the application:
+To further facilitate taking view coordinates, I created [adb-get-view-center.py](https://github.com/goncalopalaio/basher-py) which filters the `adb shell uiautomator dump` command and gives you the center view coordinates of a particular view.
 
-	PACKAGE="com.omgodse.notally"
+You'll notice that for key events, you will need to provide the key code of the key. You can see the list of valid key codes here: [KeyEvent.java](https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/KeyEvent.java)
 
-	# One of the ways to launch an application with its package name
-	adb shell monkey -p $PACKAGE -c android.intent.category.LAUNCHER 1
-	
-	# Alternative:
-	# adb shell pm dump $PACKAGE | grep -E "intent=.*$PACKAGE"
-	#
-	# > intent={act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.omgodse.notally/.activities.MainActivity}
-	#
-	# adb shell am start -n "com.omgodse.notally/.activities.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
+There's at least two more ways to get view coordinates. You will find a way to show the user touch coordinates in the device developer options and you can deduce the view coordinates from them.
 
-#### Tapping views
-
-To create a note you have to tap the floating action button at the bottom. To do that you need its screen coordinates.
-
-Either dump the view layout:
-
-	adb shell uiautomator dump --compressed && adb pull /sdcard/window_dump.xml views.xml && xmllint --format views.xml
-	
-	 > <node NAF="true" index="1" text="" resource-id="com.omgodse.notally:id/TakeNoteFAB" class="android.widget.ImageButton" package="com.omgodse.notally" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" bounds="[1188,2812][1384,3008]"/>
-
-The view bounds are 1188,2812 to 1384,3008. You will need to tap somewhere around the center of the view bounds:
-
-	adb -s b8435fb0 shell input tap 1286 2910
-
-I've created a small script to make this process a little bit easier: *adb-get-view-center.py* [here](https://github.com/goncalopalaio/basher-py).
-
-	# You only need to provide the view id or the text the view has. This script will the dump the views give you the view center.
-
-	python3 adb-get-view-center.py -i TakeNoteFAB
-	> adb shell input tap 1286 2910
-	
-	python3 adb-get-view-center.py -i "Take note"
-	> adb -s b8435fb0 shell input tap 720 2966
-	
-#### Writing text
-
-Writing text is straightforward:
-
-	adb shell input text "$RANDOM\ This\ Is\ Escaped\ Text!!"
-
-You will need to escape the text and you're limited to ASCII characters, you're out of luck if you need to write complex characters. 
-
-#### Key events
-
-If you want to use the special keys that every device has you use:
-
-	KEYCODE_BACK=4
-	adb shell input keyevent $KEYCODE_BACK
-
-You'll see that you need to know the event codes that each key corresponds. You can see the list of valid key codes here: [KeyEvent.java](https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/view/KeyEvent.java)
-
-#### Other commands
-
-There's other commands that you can list by running:
-	
-	adb shell input
-
-For example you can simulate screen swipes by providing the duration, start and end coordinates of the swipe. I never found *swipe* to be useful, you're better off getting an alternative if you need to swipe or scroll a particular view reliably (see below).
- 
-
-# Making adb shell input a little bit better
-
-If you really need string several of those commands together you will find that you most likely need to find where particular views are on the screen.
-My biggest issue with adb shell input is that I always have to out of my way to find the screen coordinates by enabling the setting in the developer options that shows the coordinates on the screen.
-
-I normally use: 
-
-	adb shell uiautomator dump --compressed && adb pull /sdcard/window_dump.xml views.xml && xmllint --format views.xml
-
-Which it will print the view tree as xml and will allow you to look for the screen coordinates of a particular view that you want, but you still have to search around the xml for what you want.
-
-There might be some issues when dealing with overlapping activities if you simply run this command. It will work for most cases but if it doesn't you can also use [Layout Inspector](https://developer.android.com/studio/debug/layout-inspector) in Android Studio.
-
-Another alternative to check the screen coordinates is:
-
-	adb shell getevent -l
-
+Alternatively you can use 	`adb shell getevent -l` which will output sensor data.
 You will get a log of the events that the device sensors are receiving. You will notice that the values are in hexadecimal so you'll have to do that conversion first.
 
-To make things a little better for myself I've created two scripts for both cases:
-
-	python3 adb-get-view-center.py -i "EnterTitle"
-		# Device: b8435fb0
-		adb -s b8435fb0 shell input tap 720 398
+In [adb-getevent.py](https://github.com/goncalopalaio/basher-py/blob/master/adb-getevent.py) you'll find a way to convert the values into screen coordinates.
 
 	adb shell getevent -l | python3 adb-getevent.py
 		X -> 950
@@ -186,84 +39,91 @@ To make things a little better for myself I've created two scripts for both case
 		X -> 939
 		Y -> 1754
 
-Source in: [basher-py](https://github.com/goncalopalaio/basher-py)
 
-- *adb-get-view-center* will give you the screen coordinates of the view id or view text that you provide as an argument to the script.
-- *adb-getevent* will print the screencordinates as an integer. There's an alternative mode, but more on that in the following section.
+Note that the output of `adb shell getevent -l` looks like it's a direct output of what the sensors are receiving but in reality the output is buffered. It might take a while to see the latest touch events. 
 
-You can also get additional events with: 
+You can get additional events with: 
 
 	adb shell uiautomator events
 
-Which lists some of the accessibility events occurring at the moment such as if any view content changed in the screen or anything was scrolled in the screen.
+Which will output a limited set of the accessibility events occurring at the moment such as if any view content changed or if any view was scrolled.
 
-## Replicating events through getevent and sendevent
 
-There's a lot of scattered information on this throughout the internet.
+## Replicating events through  `getevent`  and `sendevent`
 
-There are three limitations by default that prevent you simply saving what getevent gives you and piping it directly to sendevent.
-First of all, getevent will not provide you timing event so you know the user touched the screen, but not at what point after you started recording the events. Second, getevent uses a different format than sendevent so you will have to convert the events first.
+In theory, you could take what `getevent` gives you and feed it into `sendevent` but there are caveats.
 
-You can look at the hex representation of getevent events at [input-event-codes.h](https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h)
+First, `getevent` will not provide you timing events to determine when the event happened (and you'll have to deal with output buffering).
 
-The third limitation is that sendevent is slow to send events as it looks like it was never meant to be used to send multiple events. It opens the file descriptor that represents the device sensor, sends a single event and then closes the file descriptor (see [stackoverflow/adb-drag-vs-swipe-manual-drag-via-events](https://stackoverflow.com/questions/54505498/adb-drag-vs-swipe-manual-drag-via-events/54547196#54547196)).
+Second, `getevent` uses a different format than `sendevent`, you will have to convert the events first.
 
-To get around this, a few smart folks had the idea of recompiling sendevent so it would receive several events and write in one shot to the device sensor file descriptor.
+You can look at the hex representation of `getevent` events at [input-event-codes.h](https://cs.android.com/android/platform/superproject/+/master:bionic/libc/kernel/uapi/linux/input-event-codes.h)
 
-So here's the thing, you cannot have executables in the internal storage of the device (assuming that your device is not rooted). It makes sense you wouldn't be able to. But how to get around this? Apparently you're allowed to push to */data/local/tmp/* and then call the executable with adb (not from the device itself).
+The third limitation is that `sendevent` is slow to send events as it looks like it was never meant to be used to send multiple events. It opens the file descriptor that represents the device sensor, sends a single event and then closes the file descriptor (see [stackoverflow/adb-drag-vs-swipe-manual-drag-via-events](https://stackoverflow.com/questions/54505498/adb-drag-vs-swipe-manual-drag-via-events/54547196#54547196)).
+
+To get around this, a few smart folks had the idea of recompiling `sendevent` to receive several events and write in one shot to the device sensor file descriptor.
+
+You cannot have executables in the internal storage of the device (assuming that your device is not rooted). It makes sense you wouldn't be able to. But how to get around this? Turns out you're allowed to push to */data/local/tmp/* and then call the executable with adb (not from the device itself).
 
 	adb push myprogram /data/local/tmp/ && adb shell /data/local/tmp/myprogram
 
-These are the two main examples where I saw this being done:
+These are examples where I saw this being done:
 
-https://github.com/Cartucho/android-touch-record-replay/
+- https://github.com/Cartucho/android-touch-record-replay/
 
-https://github.com/rils/ARP/wiki
-
-I've also found this by accident in an android internal tool: [android/autotest/client/bin/input/](https://cs.android.com/android/platform/superproject/+/master:external/autotest/client/bin/input/) but surely it won't be as easy to make it work.
+- https://github.com/rils/ARP/wiki
+ 
+- [android/autotest/client/bin/input/](https://cs.android.com/android/platform/superproject/+/master:external/autotest/client/bin/input/)
 
 # Monkeyrunner
 
-You also have [monkeyrunner](https://developer.android.com/studio/test/monkeyrunner) which is a python API to control your devices. Not to be confused with [Monkey](https://developer.android.com/studio/test/monkey), another program that generates random user events in the device to perform stress testing or *monkey testing* as some people call it.
+[Monkeyrunner](https://developer.android.com/studio/test/monkeyrunner) which is a python API to control your devices. Not to be confused with [Monkey](https://developer.android.com/studio/test/monkey), which is another separate program that generates random user events in the device to perform stress testing or *monkey testing* as people call it.
 
-You can simulate taps, drags, write text, launch activities, take screenshots and compare screenshots. It seems perfectly fine, I don't have much experience with it.
+With Monkeyrunner uou can simulate taps, drags, write text, launch activities, take screenshots and compare screenshots. It's perfectly fine but I don't have much experience with it.
 
 # Automation suites in the device
 
 Even if you do not include instrumented tests in your application project there are other ways to get access to your device.
 
-## Creating a accessibility service
+## Creating a accessibility service application
 
-If you're annoyed that you always have to write the exactly same text in the exact same place, you could create an accessibility service just for this. I know it's kind of abusing the original intent of the tool, but it works.
-While active, it will continuously run and look and do what you want with the views it is seeing.
-Keep in mind that this will go through all of your views attributes and might even reveal some problems dealing with accessibility services. That might even be a bonus.
+If you're annoyed that you always have to write the same text in the exact same place, you could create an accessibility service just for this. It's abusing the original intent of the tool, I know, but it works.
+While active, it will continuously run and look and do what you want with the views it's seeing.
+Keep in mind that this will go through all of your views attributes and might even reveal problems dealing with accessibility services. I've had crashes in RecyclerView's while using this that revealed accessibility issues.
 
-==TODO link to example project==
+## Using a separate project with UIAutomator tests
 
+This is the most flexible of the previous options. You can have control of almost everything in your device. The downside over a custom accessibility service is that you have to start the actions explicitly. 
 
-## Using UiAutomator
+This is normally used in a project to do interactions outside of your project application but you can take advantage of this and make it a generic way of performing any action at any time and place.
 
-This is the most flexible of the previous options. You pretty much have control of all of your device. The only downside over the accessibility service is that you have to start the actions explicitly. 
-
-This is normally used in a project so you can do interactions outside of your application but you can also take advantage of this and make it a generic way of performing any action at any time.
-
-For this you have to create a separate project and run your tests which will install a special test apk. This creates a special entry point for the test that you wrote and allows you to start a specific test:
+You'll have to create a separate project, create the tests with your actions and run the tests. Running the tests the first time will install a test APK. This creates a special entry point to run the test you wrote at any time you want, provided that you have the test APK installed, for example:
 
 	adb shell am instrument -w -r -e debug false -e class 'com.example.ExampleTest' com.example.test/androidx.test.runner.AndroidJUnitRunner
 
 
 ### Make the tests dynamic
 
-Instead of having a particular set of actions encoded in your tests you can pass custom parameters to the test and have a single test perform different actions.
+Instead of having a particular set of actions encoded in your tests, there's the possibility to pass custom parameters to the test and have a single test perform different actions.
 
-Here’s an example project that I created:
+You can check this example I created:
 
-[goncalopalaio/DynamicTester](https://github.com/goncalopalaio/DynamicTester)
+[dynamictester/DynTest.kt](https://github.com/goncalopalaio/DynamicTester/blob/master/app/src/androidTest/java/com/gplio/dynamictester/DynTest.kt)
 
 You could even embed a small language interpreter, for example LUA, add some bindings to the uiautomator methods, send a program as a parameter to the test and have it run within the test. The extreme extension of that idea is:
 
 [xiaocong/uiautomator](https://github.com/xiaocong/uiautomator)
 
-Which as far as I know starts a test and blocks it forever to receive commands. You then have server running in the device that will do what an external python program tells it to in a RPC kind of way.
+Which appears to start a test and block it forever to receive commands. You then have server running in the device that will do what an external python program tells it to in a RPC kind of way.
 
 The downside that I’ve noticed when I used it is that it has to do communication both ways and it can be slow to do it.
+
+### Using accessibility events in the tests
+
+Creating an accessibility service application has a lot of setup. Wouldn't it be nice to do the same thing in an instrumented test? You can, we will cheat a little bit by not letting the test finish.
+
+In [dynamictester/AccessibilityLoggerTest.kt](https://github.com/goncalopalaio/DynamicTester/blob/master/app/src/androidTest/java/com/gplio/dynamictester/AccessibilityLoggerTest.kt) you'll see an instrumented test that starts listening to accessbility events continuously
+
+While the following command is running, when an EditText view is focused, it will write "Hello" in it without further user intervention:
+
+	adb shell am instrument -w -r    -e debug false -e class 'com.gplio.dynamictester.AccessibilityLoggerTest' com.gplio.dynamictester.test/androidx.test.runner.AndroidJUnitRunner
