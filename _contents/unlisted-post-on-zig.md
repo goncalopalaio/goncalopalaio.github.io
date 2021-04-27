@@ -5,7 +5,8 @@ date = 27-04-2021
 What's interesting:
 
 - It's a somewhat simple language backed by powerful constructs. It has optionals, nullable types, error handling is done through error sets (no exceptions here), etc.
-- Powerful compilation time (Comptime) constructs.
+- Functions that are not called are not compiled. Useful when used with compilation time features (for example some methods don't exist in the target operating system).
+- Powerful compilation time (Comptime) constructs. Can be used to implement generics, lookup tables, etc.
 - Standard library is written in Zig and since the language is simple you'll probably understand what is being done there.
 - Aims to be a modern C replacement in its principles.
 - Out of the box cross compilation. The compiler is also able to compile C.
