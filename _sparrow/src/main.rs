@@ -258,17 +258,12 @@ fn main() {
     let page_title = "Gonçalo Palaio — Blog";
     let index_title = "Gonçalo's Blog";
 
-    let md_posts = get_md_files(POST_PREFIX);
-    let md_unlisted_posts = get_md_files(UNLISTED_POST_PREFIX);
     let md_pages = get_md_files(PAGE_PREFIX);
 
+    let md_posts = get_md_files(POST_PREFIX);
     let posts = read_posts(&md_posts);
-    let unlisted_posts = read_posts(&md_unlisted_posts);
-
+    
     let header_md_content = create_md_header(&index_title, &md_pages);
-
-    let md_post_list = generate_md_post_list(&posts);
-
     for md in &md_pages {
         generate_sub_page(&header_md_content, &md);
     }
@@ -277,9 +272,12 @@ fn main() {
         generate_sub_page_post(true, &header_md_content, &post);
     }
 
+    let md_unlisted_posts = get_md_files(UNLISTED_POST_PREFIX);
+    let unlisted_posts = read_posts(&md_unlisted_posts);
     for post in &unlisted_posts {
         generate_sub_page_post(false, &header_md_content, &post);
     }
-
+    
+    let md_post_list = generate_md_post_list(&posts);
     generate_index(&page_title, &header_md_content, &md_post_list);
 }
