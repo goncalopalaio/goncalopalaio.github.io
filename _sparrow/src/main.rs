@@ -79,7 +79,6 @@ fn read_posts(list: &Vec<PathBuf>) -> std::vec::Vec<Post> {
     let mut posts = Vec::<Post>::new();
 
     for file in list {
-        
         let (content, name, title, date_str, date) = parse_file_data(file);
 
         let post = Post {
@@ -165,7 +164,7 @@ fn create_md_header(title: &str, pages: &Vec<PathBuf>) -> String {
     return md_content;
 }
 
-fn create_file(title: &str, content: &str, output_name: &str) {
+fn create_file(add_to_published: bool, title: &str, content: &str, output_name: &str) {
 	let file = File::open(TEMPLATE_PATH).unwrap();
     let reader = BufReader::new(file);
     let mut contents = String::new();
@@ -183,7 +182,12 @@ fn create_file(title: &str, content: &str, output_name: &str) {
         contents.push_str(&output);
     }
 
-    fs::write(format!("../{}.html", output_name), contents).unwrap();
+    if add_to_published {
+        fs::write(format!("../{}.html", output_name), contents).unwrap();
+    } else {
+        fs::write(format!("../_tmp/{}.html", output_name), contents).unwrap();
+    }
+    
 }
 
 fn generate_index(title: &str, header_md_content: &str, body_md_content: &str) {
@@ -194,7 +198,7 @@ fn generate_index(title: &str, header_md_content: &str, body_md_content: &str) {
     content.push_str(&header_content);
     content.push_str(&body_content);
 
-    create_file(&title, &content, "index");
+    create_file(true, &title, &content, "index");
 }
 
 fn generate_sub_page(header_md_content: &str, md_path: &PathBuf) {
@@ -209,10 +213,10 @@ fn generate_sub_page(header_md_content: &str, md_path: &PathBuf) {
 
     let content = markdown_to_html(&md_content, &get_comrak_options());
 
-    create_file(&title, &content, &name);
+    create_file(true, &title, &content, &name);
 }
 
-fn generate_sub_page_post(header_md_content: &str, post: &Post) {
+fn generate_sub_page_post(add_to_published: bool, header_md_content: &str, post: &Post) {
     let mut md_content = String::new();
 
     md_content.push_str(header_md_content);
@@ -228,7 +232,7 @@ fn generate_sub_page_post(header_md_content: &str, post: &Post) {
 
     let content = markdown_to_html(&md_content, &get_comrak_options());
 
-    create_file(&post.title, &content, &post.name);
+    create_file(add_to_published, &post.title, &content, &post.name);
 }
 
 fn generate_md_post_list(list: &Vec<Post>) -> String {
@@ -270,11 +274,11 @@ fn main() {
     }
 
     for post in &posts {
-        generate_sub_page_post(&header_md_content, &post);
+        generate_sub_page_post(true, &header_md_content, &post);
     }
 
     for post in &unlisted_posts {
-        generate_sub_page_post(&header_md_content, &post);
+        generate_sub_page_post(false, &header_md_content, &post);
     }
 
     generate_index(&page_title, &header_md_content, &md_post_list);
