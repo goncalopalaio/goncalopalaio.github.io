@@ -16,7 +16,7 @@
   - [Oliveira, G. and Ribeiro, B. and Pimentel, A. and Frazão, X. , **"SABADO - SmArt BrAnd DetectiOn"**, in 21th edition of the Portuguese Conference on Pattern Recognition (RecPad), 2015, 2015
 ](https://www.cisuc.uc.pt/publication/show/4351)
 
-## Random Screenshots From Projects
+## Other (small) Projects
 <div class="projects">
   <span class="project-small">
     <a class="inline-link" target="_blank" href="img/lcat-prototype_v_0_1_0.png"><img style="width:30%;" src="img/lcat-prototype_v_0_1_0.png"/></a>
