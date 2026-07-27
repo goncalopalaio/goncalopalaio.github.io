@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermal Printer Timebox (08:00 - 19:00)</title>
+    <style>
+        @page {
+            size: 48mm auto;
+            margin: 0;
+        }
+
+        /* Optional: Ensure tables or items fit tightly */
+        table {
+        width: 100%;
+        border-collapse: collapse;
+        }
+
+        th, td {
+        padding: 2px 0;
+        font-size: 8pt;
+        }
+
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #0000004a;
+            background: #fff;
+            margin: 0;
+            padding: 2mm;
+            width: 48mm;
+            box-sizing: border-box;
+        }
+
+        .planner-header {
+            text-align: center;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 3px;
+            margin-bottom: 6px;
+        }
+
+        .planner-header h2 {
+            font-size: 12px;
+            margin: 0 0 2px 0;
+            text-transform: uppercase;
+        }
+
+        .date-line {
+            font-size: 9px;
+            margin-bottom: 2px;
+        }
+
+        .hour-block {
+            margin-bottom: 1px;
+            padding-bottom: 1px;
+        }
+
+        .hour-header {
+            font-weight: bold;
+            font-size: 8px;
+            margin-bottom: 1px;
+        }
+
+        .quarter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            text-align: center;
+        }
+
+        .quarter-cell {
+            border: 1px dotted #0000004a;
+            padding: 4px 0;
+            min-height: 18px;
+            font-size: 0px;
+            background: #fff;
+        }
+
+        .print-btn-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        @media print {
+            .print-btn-container {
+                display: none;
+            }
+            body {
+                padding: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="timeline">
+        <!-- 08:00 -->
+        <div class="hour-block">
+            <div class="hour-header">08:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 09:00 -->
+        <div class="hour-block">
+            <div class="hour-header">09:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 10:00 -->
+        <div class="hour-block">
+            <div class="hour-header">10:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 11:00 -->
+        <div class="hour-block">
+            <div class="hour-header">11:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 12:00 -->
+        <div class="hour-block">
+            <div class="hour-header">12:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 13:00 -->
+        <div class="hour-block">
+            <div class="hour-header">13:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 14:00 -->
+        <div class="hour-block">
+            <div class="hour-header">14:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 15:00 -->
+        <div class="hour-block">
+            <div class="hour-header">15:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 16:00 -->
+        <div class="hour-block">
+            <div class="hour-header">16:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 17:00 -->
+        <div class="hour-block">
+            <div class="hour-header">17:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 18:00 -->
+        <div class="hour-block">
+            <div class="hour-header">18:00</div>
+            <div class="quarter-grid">
+                <div class="quarter-cell">.00</div>
+                <div class="quarter-cell">.15</div>
+                <div class="quarter-cell">.30</div>
+                <div class="quarter-cell">.45</div>
+            </div>
+        </div>
+
+        <!-- 19:00 (Single endpoint block) -->
+        <div class="hour-block">
+            <div class="hour-header">19:00</div>
+        </div>
+    </div>
+</body>
+</html>
