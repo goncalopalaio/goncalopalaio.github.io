@@ -84,29 +84,11 @@
             background: #fff;
         }
 
-        .print-btn-container {
-            text-align: center;
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
         .action-btn {
             width: 100%;
             padding: 8px;
             font-size: 11px;
             cursor: pointer;
-        }
-
-        @media print {
-            .print-btn-container {
-                display: none;
-            }
-            body {
-                padding: 0;
-                width: 100%;
-            }
         }
     </style>
 </head>
@@ -239,11 +221,8 @@
         </div>
     </div>
 
-    <div class="print-btn-container">
-        <button class="action-btn" onclick="window.print()">Print Timebox</button>
-        <button class="action-btn" onclick="downloadPDF()">Download PDF</button>
-    </div>
-
+    <button class="action-btn" onclick="downloadPDF()">Download PDF</button>
+    
     <script>
         function downloadPDF() {
             const { jsPDF } = window.jspdf;
