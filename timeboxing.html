@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thermal Printer Timebox (08:00 - 19:00)</title>
+    
+    <!-- Include jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- html2canvas Library (Required for doc.html() to work -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         @page {
             size: 48mm auto;
@@ -73,13 +80,21 @@
             border: 1px dotted #0000004a;
             padding: 4px 0;
             min-height: 40px;
-            font-size: 0px;
+            font-size: 9px;
             background: #fff;
         }
 
         .print-btn-container {
             text-align: center;
             margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 100%;
+            cursor: pointer;
         }
 
         @media print {
@@ -94,7 +109,7 @@
     </style>
 </head>
 <body>
-    <div class="timeline">
+    <div id="content" class="timeline">
         <!-- 08:00 -->
         <div class="hour-block">
             <div class="hour-header">08:00</div>
@@ -221,8 +236,35 @@
             <div class="hour-header">19:00</div>
         </div>
     </div>
+
     <div class="print-btn-container">
-        <button class="print-btn" onclick="window.print()">Print Timebox</button>
+        <button class="action-btn" onclick="window.print()">Print Timebox</button>
+        <button class="action-btn" onclick="downloadPDF()">Download PDF</button>
     </div>
+
+    <script>
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            
+            // Set custom thermal width (48mm) and auto-calculate length based on content
+            const doc = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: [48, 250] // Custom format matching 48mm thermal roll width
+            });
+
+            const element = document.getElementById('content');
+
+            doc.html(element, {
+                callback: function (doc) {
+                    doc.save("timebox-08-19.pdf");
+                },
+                x: 2,
+                y: 2,
+                width: 44, // Fit inside the 48mm width keeping padding in mind
+                windowWidth: 180 // Simulated browser viewport width for clean scaling
+            });
+        }
+    </script>
 </body>
 </html>
