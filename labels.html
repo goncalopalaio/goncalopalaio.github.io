@@ -7,6 +7,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Include jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Include html2canvas Library (Required for doc.html() to work) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         @page {
             size: 48mm auto;
@@ -103,8 +110,7 @@
         <input type="text" id="labelText" placeholder="Label Text (e.g. Box 1)" value="Outdoor Gear">
         <input type="text" id="labelKeyword" placeholder="Image Keyword (e.g. mountain)" value="mountain">
         <button onclick="addNewLabel()">Add Label</button>
-        <button onclick="window.print()">Print Labels</button>
-
+        <button class="action-btn" onclick="downloadPDF()">Download PDF</button>
     </div>
 
     <script>
@@ -150,6 +156,35 @@
             textInput.value = '';
             keywordInput.value = '';
             textInput.focus();
+        }
+        
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const element = document.getElementById('labels');
+
+            // Get the precise pixel height of the element
+            const elementHeightPx = element.offsetHeight;
+
+            // Convert pixels to millimeters (approx. 3.78 pixels per mm at standard 96 DPI)
+            const heightMm = elementHeightPx / 3.78;
+
+            // Initialize jsPDF with a fixed width (48mm) and the calculated dynamic height
+            const doc = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: [48, heightMm]
+            });
+
+            // Render the HTML element onto the tailored document
+            doc.html(element, {
+                callback: function (doc) {
+                    doc.save("labels.pdf");
+                },
+                x: 2,
+                y: 2,
+                width: 44, // Match width minus horizontal margins
+                windowWidth: 180
+            });
         }
 
         // Load an initial demo label on startup
