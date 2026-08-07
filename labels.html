@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermal Printer Label Maker - Pixabay</title>
+    <style>
+        @page {
+            size: 48mm auto;
+            margin: 0;
+        }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 2mm;
+            width: 48mm;
+            box-sizing: border-box;
+            background: #fff;
+        }
+        .label-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .label-box {
+            width: 44mm;
+            height: 35mm;
+            border: 1px dashed #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding: 5px;
+            box-sizing: border-box;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        .label-text {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 4px 6px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 9pt;
+            border-radius: 4px;
+            color: #000;
+        }
+        
+        /* Non-printable interactive controls area */
+        .controls {
+            margin-top: 20px;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            width: 44mm;
+            box-sizing: border-box;
+        }
+        .controls input, .controls button {
+            width: 100%;
+            margin-bottom: 8px;
+            padding: 6px;
+            box-sizing: border-box;
+            font-size: 9pt;
+        }
+
+        @media print {
+            .no-print { 
+                display: none !important; 
+            }
+            body {
+                padding: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Printable Label Container -->
+    <div id="labels" class="label-container">
+        <!-- Default initial label -->
+    </div>
+
+    <!-- Non-Printable Configuration Panel -->
+    <div class="controls no-print">
+        <h3>Label Editor</h3>
+        <input type="text" id="labelText" placeholder="Label Text (e.g. Box 1)" value="Outdoor Gear">
+        <input type="text" id="labelKeyword" placeholder="Image Keyword (e.g. mountain)" value="mountain">
+        <button onclick="addNewLabel()">Add Label</button>
+        <button onclick="window.print()">Print Labels</button>
+        
+    </div>
+
+    <script>
+        // Replace with your personal Pixabay API key (https://pixabay.com/api/docs/)
+        const PIXABAY_API_KEY = '57058684-ee3125910a686cf7e963f4d70';
+
+        async function createLabelElement(text, keyword) {
+            const container = document.getElementById('labels');
+
+            // Create label container element with fallback background
+            const div = document.createElement('div');
+            div.className = 'label-box';
+            div.innerHTML = `<span class="label-text">${text}</span>`;
+            container.appendChild(div);
+
+            try {
+                // Request image from Pixabay API based on the keyword
+                const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(keyword)}&image_type=photo&per_page=3`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.hits && data.hits.length > 0) {
+                    const imageUrl = data.hits[0].webformatURL;
+                    div.style.backgroundImage = `url('${imageUrl}')`;
+                }
+            } catch (error) {
+                console.error(`Failed to load image for keyword: ${keyword}`, error);
+            }
+        }
+
+        function addNewLabel() {
+            const textInput = document.getElementById('labelText');
+            const keywordInput = document.getElementById('labelKeyword');
+
+            if (!textInput.value.trim() || !keywordInput.value.trim()) {
+                alert("Please fill in both fields!");
+                return;
+            }
+
+            createLabelElement(textInput.value, keywordInput.value);
+
+            // Clear inputs for convenience
+            textInput.value = '';
+            keywordInput.value = '';
+            textInput.focus();
+        }
+
+        // Load an initial demo label on startup
+        window.onload = () => {
+            createLabelElement("Outdoor Gear", "mountain");
+        };
+    </script>
+</body>
+</html>
