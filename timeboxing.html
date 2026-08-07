@@ -80,7 +80,7 @@
             border: 1px dotted #0000004a;
             padding: 4px 0;
             min-height: 40px;
-            font-size: 9px;
+            font-size: 0px;
             background: #fff;
         }
 
@@ -247,24 +247,30 @@
     <script>
         function downloadPDF() {
             const { jsPDF } = window.jspdf;
-            
-            // Set custom thermal width (48mm) and auto-calculate length based on content
+            const element = document.getElementById('content');
+
+            // Get the precise pixel height of the element
+            const elementHeightPx = element.offsetHeight;
+
+            // Convert pixels to millimeters (approx. 3.78 pixels per mm at standard 96 DPI)
+            const heightMm = elementHeightPx / 3.78;
+
+            // Initialize jsPDF with a fixed width (48mm) and the calculated dynamic height
             const doc = new jsPDF({
                 orientation: "portrait",
                 unit: "mm",
-                format: [48, 250] // Custom format matching 48mm thermal roll width
+                format: [48, heightMm]
             });
 
-            const element = document.getElementById('content');
-
+            // Render the HTML element onto the tailored document
             doc.html(element, {
                 callback: function (doc) {
                     doc.save("timebox-08-19.pdf");
                 },
                 x: 2,
                 y: 2,
-                width: 44, // Fit inside the 48mm width keeping padding in mind
-                windowWidth: 180 // Simulated browser viewport width for clean scaling
+                width: 44, // Match width minus horizontal margins
+                windowWidth: 180
             });
         }
     </script>
