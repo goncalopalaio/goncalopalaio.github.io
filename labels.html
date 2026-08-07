@@ -120,21 +120,31 @@
         async function createLabelElement(text, keyword) {
             const container = document.getElementById('labels');
 
-            // Create label container element with fallback background
             const div = document.createElement('div');
             div.className = 'label-box';
             div.innerHTML = `<span class="label-text">${text}</span>`;
             container.appendChild(div);
 
             try {
-                // Request image from Pixabay API based on the keyword
+                // Fetch image list from Pixabay
                 const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(keyword)}&image_type=photo&per_page=3`;
                 const response = await fetch(url);
                 const data = await response.json();
 
                 if (data.hits && data.hits.length > 0) {
                     const imageUrl = data.hits[0].webformatURL;
-                    div.style.backgroundImage = `url('${imageUrl}')`;
+
+                    // Fetch the image as a blob.
+                    // We want the generated PDF to be able to access the image.
+                    const imageResponse = await fetch(imageUrl);
+                    const imageBlob = await imageResponse.blob();
+
+                    // Convert blob into a local Base64 data string
+                    const reader = new FileReader();
+                    reader.onloadend = function () {
+                        div.style.backgroundImage = `url('${reader.result}')`;
+                    };
+                    reader.readAsDataURL(imageBlob);
                 }
             } catch (error) {
                 console.error(`Failed to load image for keyword: ${keyword}`, error);
